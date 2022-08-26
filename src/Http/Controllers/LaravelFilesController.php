@@ -13,6 +13,7 @@ class LaravelFilesController extends Controller
 
 
         dump($value);
+        dump(123);
 
         return view("laravelfiles::index");
     }

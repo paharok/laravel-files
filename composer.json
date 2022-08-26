@@ -2,7 +2,7 @@
     "name": "paharok/laravel-files",
     "description": "Filemanager for Laravel",
     "minimum-stability": "stable",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "paharok",
