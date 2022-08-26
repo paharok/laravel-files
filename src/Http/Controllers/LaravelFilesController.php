@@ -12,8 +12,7 @@ class LaravelFilesController extends Controller
         $value = config('laravelfiles.variable');
 
 
-        dump($value);
-        dump(123);
+
 
         return view("laravelfiles::index");
     }
