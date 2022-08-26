@@ -1,0 +1,29 @@
+{
+    "name": "paharok/laravel-files",
+    "description": "Filemanager for Laravel",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "paharok",
+            "email": "soltanovka@gmail.com",
+            "homepage": "https://github.com/paharok"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "laravel/framework": "^9.19"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Paharok\\Laravelfiles\\Providers\\LaraveFilesServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Paharok\\Laravelfiles\\": "src"
+        }
+    }
+}
