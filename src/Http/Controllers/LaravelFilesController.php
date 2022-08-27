@@ -9,6 +9,9 @@ class LaravelFilesController extends Controller
 {
     //
     public function index(){
+
+
+
         $value = config('laravelfiles.variable');
 
 

@@ -33,5 +33,10 @@ class LaraveFilesServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
         );
+
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/laravel-files'),
+        ], 'laravelfiles');
+
     }
 }
