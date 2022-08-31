@@ -5,10 +5,11 @@ use App\Http\Controllers\Controller;
 use That0n3guy\Transliteration\Transliteration AS Transliteration;
 use Paharok\Laravelfiles\Helpers\ChangeImageIntervention as ChangeImage;
 
-use File;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
+use Exception;
 
 class LaravelFilesController extends Controller
 {
@@ -142,6 +143,7 @@ class LaravelFilesController extends Controller
         }else if(file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName)){
            return env('APP_URL') . '/' . $this->filesFolder .  $prePath . '/__thumbnails__/'.$thumbnailName;
         }
+        return '';
     }
 
 
