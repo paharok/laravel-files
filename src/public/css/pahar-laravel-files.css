@@ -1,0 +1,268 @@
+.plf-bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.3;
+    z-index: 10000;
+}
+.plf-popup{
+    position: fixed;
+    width: 100%;
+    max-width: 900px;
+    height: 100%;
+    max-height: 600px;
+    background: #fff;
+    top: 50%;
+    z-index: 10001;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    overflow-y: auto;
+}
+.plf-new-folder-pop .input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3),
+.plf-new-folder-pop .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.plf-new-folder-pop .input-group>.form-control,
+.plf-new-folder-pop .input-group>.form-file,
+.plf-new-folder-pop .input-group>.form-select {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    position: relative;
+    width: 1%;
+}
+.plf-new-folder-pop .input-group {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.plf-new-folder-pop .input-group {
+    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
+}
+.plf-new-folder-pop .form-control {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid #eaedf1;
+    border-radius: 7px;
+    color: rgba(73,80,87,.75);
+    display: block;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    width: 100%;
+    outline: none!important;
+}
+.plf-new-folder-pop .form-control:focus {
+    border-color: #8fbd56;
+}
+.plf-new-folder-pop{
+    display: none;
+    padding: 10px;
+}
+.plf-new-folder-form{
+    display: flex;
+}
+.plf-close:hover{
+    opacity: 1;
+}
+.plf-close{
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #d12c47;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.7;
+}
+.plf-popup-inner {
+    height: 100%;
+    position: relative;
+}
+.plf-popup-outer{
+    height: 100%;
+}
+.plf-body{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.plf-file-item{
+    width: 150px;
+    margin: 10px 10px 0 10px;
+    padding: 5px;
+    cursor: pointer;
+}
+.plf-filename{
+    display: block;
+    width: 100%;
+    word-break: break-all;
+    text-align: center;
+    font-size: 15px;
+}
+.plf-file-img{
+    position: relative;
+    width: 100px;
+    margin: 0 auto;
+}
+.plf-file-extension{
+    position: absolute;
+}
+.plf-file-extension{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,0);
+    color: #fff;
+    font-weight: 700;
+    font-size: 17px;
+}
+.lds-grid {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+.pre-lds-grid{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+.lds-grid div {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #8fbd56;
+    animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+    top: 8px;
+    left: 8px;
+    animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+    top: 8px;
+    left: 32px;
+    animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+    top: 8px;
+    left: 56px;
+    animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+    top: 32px;
+    left: 8px;
+    animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+    top: 32px;
+    left: 32px;
+    animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+    top: 32px;
+    left: 56px;
+    animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+    top: 56px;
+    left: 8px;
+    animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+    top: 56px;
+    left: 32px;
+    animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+    top: 56px;
+    left: 56px;
+    animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+.plf-path li:hover{
+    opacity: 1;
+}
+.plf-path li.plf-path-li{
+    cursor: pointer;
+    color: #8fbd56;
+    opacity: 0.8;
+    font-weight: 900;
+    font-size: 20px;
+    margin: 5px 0;
+}
+.plf-path li.plf-path-slash{
+    cursor: pointer;
+    color: #8fbd56;
+    opacity: 1;
+    font-weight: 900;
+    font-size: 20px;
+    margin: 5px 8px;
+}
+.plf-path{
+    padding: 10px;
+    background: #f9f9f9;
+    margin: 0;
+    display: flex;
+    list-style: none;
+    flex-wrap: wrap;
+}
+.plf-btns>*{
+    margin: 5px;
+}
+.plf-btns{
+    padding: 10px 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.plf-green-btn{
+    cursor: pointer;
+    background: #8fbd56;
+    color: #fff;
+    border-radius: 3px;
+    border: 1px solid #8fbd56;
+    padding: 5px 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.plf-red-btn{
+    cursor: pointer;
+    background: red;
+    color: #fff;
+    border-radius: 3px;
+    border: 1px solid red;
+    padding: 5px 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.plf-green-btn svg{
+    display: inline-block;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+}
+.plf-files-form input{
+    display: none;
+}

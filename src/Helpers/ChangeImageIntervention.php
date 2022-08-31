@@ -3,7 +3,7 @@ namespace Paharok\Laravelfiles\Helpers;
 
 use Paharok\Laravelfiles\Helpers\Contracts\ChangeImage;
 
-use Intervention\Image\Image AS Image;
+use Intervention\Image\Facades\Image AS Image;
 
 class ChangeImageIntervention implements ChangeImage{
 
@@ -12,7 +12,7 @@ class ChangeImageIntervention implements ChangeImage{
 
 		if(!$filePath || !file_exists(public_path() . $filePath)){
 
-			$filePath = '/img/no_image.png';
+			$filePath = '/no-img.png';
 		}
 		$image_size = getimagesize(public_path() . $filePath);
 
@@ -34,7 +34,7 @@ class ChangeImageIntervention implements ChangeImage{
 		$path_parts = pathinfo($filePath);
 
 		$mainMime = mime_content_type(public_path() . $filePath);
-		$cache_dir = 'cache_image' . $path_parts['dirname'] .'/';
+		$cache_dir = $path_parts['dirname'] . '/__thumbnails__/';
 		$newFileName = $path_parts['filename'] . $width . '_'.$height . $crop . '.'. $path_parts['extension'];
 		$newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop . '.webp';
 
