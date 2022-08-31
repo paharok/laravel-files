@@ -12,7 +12,9 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "laravel/framework": "^9.19"
+        "laravel/framework": "^9.19",
+        "that0n3guy/transliteration": "^2.0",
+        "intervention/image": "2.*"
     },
     "extra": {
         "laravel": {
