@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use That0n3guy\Transliteration\Transliteration AS Transliteration;
 use Paharok\Laravelfiles\Helpers\ChangeImageIntervention as ChangeImage;
 
-use Illuminate\Http\File;
+use File;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
@@ -23,6 +23,7 @@ class LaravelFilesController extends Controller
         'no-img.jpg',
         'no-img.png',
         '__thumbnails__',
+        '__file_ico__.svg',
     ];
 
     private $pathToFiles;
@@ -77,6 +78,62 @@ class LaravelFilesController extends Controller
         }
 
         return response()->json($request->all(),200);
+    }
+
+
+    public function removeFile(Request $request){
+        $filePath = $request->input('path');
+        $pathInfo = pathinfo($filePath);
+
+        if(file_exists($this->pathToFiles . $filePath)){
+            unlink($this->pathToFiles . $filePath);
+        }
+
+        $thumbsDir = $this->pathToFiles . $pathInfo['dirname'] . '/__thumbnails__';
+        if(is_dir($thumbsDir)){
+            $this->removeThumbnails($thumbsDir,$pathInfo['filename']);
+        }
+
+        return response()->json(['success'=>'ok'],200);
+    }
+
+    public function removeDir(Request $request){
+        $dirPath = $request->input('path');
+        if(is_dir($this->pathToFiles . $dirPath) &&  File::deleteDirectory($this->pathToFiles . $dirPath)){
+            return response()->json(['success'=>'ok'],200);
+        }
+        return response()->json(['errors'=>['err1'=>'Щось пішло не так!']],200);
+    }
+
+    public function search(Request $request){
+        $currentFolder = $this->pathToFiles . $request->input('currentFolder');
+
+
+
+        return response()->json(['success'=>'ok'],200);
+    }
+
+    private function removeThumbnails($thumbsDir,$filename){
+        $files = $this->getFilesFromDir($thumbsDir);
+        foreach ($files as $file){
+            if(in_array($file,$this->exclude)){
+                continue;
+            }
+            $fileInfo = pathinfo($file);
+            if(!strstr($fileInfo['filename'],$filename)){
+                continue;
+            }
+            $withoutMainName = str_replace(
+                [$filename,'fit','resize','resizebg'],
+                ['','','',''],
+                $fileInfo['filename']
+            );
+
+            preg_match("/^[0-9]{1,}[_][0-9]{1,}$/",$withoutMainName,$matches);
+            if(!empty($matches)){
+                unlink($thumbsDir . '/' . $file);
+            }
+        }
     }
 
     private function makeThumbnails($folder, $fileName){
