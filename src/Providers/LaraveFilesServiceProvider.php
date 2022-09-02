@@ -4,6 +4,9 @@ namespace Paharok\Laravelfiles\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\Facades\Blade;
+use Paharok\Laravelfiles\View\Components\FileFieldComponent;
+
 class LaraveFilesServiceProvider extends ServiceProvider
 {
     /**
@@ -25,14 +28,19 @@ class LaraveFilesServiceProvider extends ServiceProvider
     {
         //
         $this->loadRoutesFrom(__DIR__.'/../routes/laravelfiles.php');
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravelfiles');
 
-        $this->publishes([
-            __DIR__.'/../config/laravelfiles.php' => config_path('laravelfiles.php'),
-        ]);
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
-        );
+        $test = Blade::component('plf-field', FileFieldComponent::class);
+
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'laravelfiles');
+
+//        $this->publishes([
+//            __DIR__.'/../config/laravelfiles.php' => config_path('laravelfiles.php'),
+//        ]);
+//        $this->mergeConfigFrom(
+//            __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
+//        );
 
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/laravel-files'),

@@ -1,79 +1,52 @@
 <?php
 
 namespace Paharok\Laravelfiles\Http\Controllers;
-use App\Http\Controllers\Controller;
-use That0n3guy\Transliteration\Transliteration AS Transliteration;
-use Paharok\Laravelfiles\Helpers\ChangeImageIntervention as ChangeImage;
-
-use File;
-use Illuminate\Support\Facades\Log;
-
+use Paharok\Laravelfiles\Http\Controllers\Controller;
+use Paharok\Laravelfiles\LaravelFiles AS LaravelFiles;
 use Illuminate\Http\Request;
-use Exception;
 
 class LaravelFilesController extends Controller
 {
-    private $imagesResize = ['jpg','jpeg','png','webp'];
 
-    private $imagesOrigin = ['svg'];
+    public function index(LaravelFiles $laravelFiles, Request $request){
 
-    private $exclude = [
-        '.',
-        '..',
-        'no-img.jpg',
-        'no-img.png',
-        '__thumbnails__',
-        '__file_ico__.svg',
-    ];
+         $path = $laravelFiles->getPathToFiles() . $request->input('path');
 
-    private $pathToFiles;
+         $files = $laravelFiles->getFilesFromDir($path);
+         $data['files'] = $laravelFiles->formatedFiles($files,$path);
 
-    private $filesFolder = 'vendor/laravel-files/files';
-    //
-
-    public function __construct(){
-        $this->pathToFiles = public_path($this->filesFolder);
-    }
-
-    public function index(Request $request){
-
-         $path = $this->pathToFiles . $request->input('path');
-
-         $files = $this->getFilesFromDir($path);
-         $data['files'] = $this->formatedFiles($files,$path);
-
-         $data['files'] = $this->sortFiles($data['files']);
+         $data['files'] = $laravelFiles->sortFiles($data['files']);
 
          $data['currentFolder'] = $request->input('path');
-         $data['breadcrumbs'] = $this->generateBreadcrumbs($request->input('path'));
+         $data['breadcrumbs'] = $laravelFiles->generateBreadcrumbs($request->input('path'));
 
          return view("laravelfiles::index",$data);
     }
 
-    public function newFolder(Request $request){
+    public function newFolder(LaravelFiles $laravelFiles, Request $request){
         if(!$request->input('foldername')){
-            return response()->json(['error'=>'Пустое поле'],200);
+            return response()->json(['error'=>trans('laravelfiles::plf.errorEmptyField')],200);
         }
 
-        $currentFolder = $this->pathToFiles . $request->input('currentFolder');
+        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('currentFolder');
 
-        $folderName = $this->setName($request->input('foldername'),$currentFolder);
+        $folderName = $laravelFiles->setName($request->input('foldername'),$currentFolder);
 
-        File::makeDirectory($currentFolder . '/' . $folderName);
+        $laravelFiles->makeDirectory($currentFolder . '/' . $folderName);
 
         return response()->json([$folderName],200);
     }
 
 
-    public function newFile(Request $request){
-        $currentFolder = $this->pathToFiles . $request->input('folder');
+    public function newFile(LaravelFiles $laravelFiles, Request $request){
+        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('folder');
         for($i=0;$request->hasFile('file-'.$i);$i++){
             $file = $request->file('file-'.$i);
             if($file->isValid()){
 
-                $fileName = $this->setName($file->getClientOriginalName(),$currentFolder);
+                $fileName = $laravelFiles->setName($file->getClientOriginalName(),$currentFolder);
                 $file->move($currentFolder,$fileName);
-                $this->makeThumbnails($currentFolder,$fileName);
+                $laravelFiles->makeThumbnails($currentFolder,$fileName);
             }
         }
 
@@ -81,180 +54,47 @@ class LaravelFilesController extends Controller
     }
 
 
-    public function removeFile(Request $request){
+    public function removeFile(LaravelFiles $laravelFiles, Request $request){
         $filePath = $request->input('path');
         $pathInfo = pathinfo($filePath);
 
-        if(file_exists($this->pathToFiles . $filePath)){
-            unlink($this->pathToFiles . $filePath);
+        if(file_exists($laravelFiles->getPathToFiles() . $filePath)){
+            unlink($laravelFiles->getPathToFiles() . $filePath);
         }
 
-        $thumbsDir = $this->pathToFiles . $pathInfo['dirname'] . '/__thumbnails__';
+        $thumbsDir = $laravelFiles->getPathToFiles() . $pathInfo['dirname'] . '/__thumbnails__';
         if(is_dir($thumbsDir)){
-            $this->removeThumbnails($thumbsDir,$pathInfo['filename']);
+            $laravelFiles->removeThumbnails($thumbsDir,$pathInfo['filename']);
         }
 
         return response()->json(['success'=>'ok'],200);
     }
 
-    public function removeDir(Request $request){
+    public function removeDir(LaravelFiles $laravelFiles, Request $request){
         $dirPath = $request->input('path');
-        if(is_dir($this->pathToFiles . $dirPath) &&  File::deleteDirectory($this->pathToFiles . $dirPath)){
+        if(is_dir($laravelFiles->getPathToFiles() . $dirPath) &&  $laravelFiles->deleteDirectory($laravelFiles->getPathToFiles() . $dirPath)){
             return response()->json(['success'=>'ok'],200);
         }
-        return response()->json(['errors'=>['err1'=>'Щось пішло не так!']],200);
+        return response()->json(['errors'=>['err1'=>trans('laravelfiles::plf.errorSomethingWrong')]],200);
     }
 
-    public function search(Request $request){
-        $currentFolder = $this->pathToFiles . $request->input('currentFolder');
+    public function search(LaravelFiles $laravelFiles, Request $request){
+        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('currentFolder');
+        $s = $request->input('s');
 
-
-
-        return response()->json(['success'=>'ok'],200);
-    }
-
-    private function removeThumbnails($thumbsDir,$filename){
-        $files = $this->getFilesFromDir($thumbsDir);
-        foreach ($files as $file){
-            if(in_array($file,$this->exclude)){
-                continue;
-            }
-            $fileInfo = pathinfo($file);
-            if(!strstr($fileInfo['filename'],$filename)){
-                continue;
-            }
-            $withoutMainName = str_replace(
-                [$filename,'fit','resize','resizebg'],
-                ['','','',''],
-                $fileInfo['filename']
-            );
-
-            preg_match("/^[0-9]{1,}[_][0-9]{1,}$/",$withoutMainName,$matches);
-            if(!empty($matches)){
-                unlink($thumbsDir . '/' . $file);
-            }
-        }
-    }
-
-    private function makeThumbnails($folder, $fileName){
-        $this->checkThumbnailFolder($folder);
-        try {
-            $fileInfo = pathinfo($folder . '/' . $fileName);
-            if(in_array(strtolower($fileInfo['extension']),$this->imagesResize)){
-                $filePublicPath = str_replace(public_path(),'',($folder . '/' . $fileName));
-
-                ChangeImage::changeImage($filePublicPath,100,100);
-            }
-        }catch (Exception $e){
-            echo 'Выброшено исключение: ',  $e->getMessage(), "\n";
+        if(!$s){
+            return response()->json(['errors'=>['err'=>'err']],200);
         }
 
+        $files = $laravelFiles->searchFiles($currentFolder,$s);
+        $data['files'] = $laravelFiles->formatedFiles($files,$currentFolder);
 
-    }
+        $returnHTML = view('laravelfiles::partials.items',$data)->render();
 
-    private function checkThumbnailFolder($folder){
-        if(!is_dir($folder . '/__thumbnails__')){
-            File::makeDirectory($folder . '/__thumbnails__');
-        }
-    }
-
-    private function formatedFiles($files,$dir='/'){
-        $prePath = str_replace($this->pathToFiles,'',$dir);
-
-
-        $filesList = [];
-        foreach($files as $key=>$file){
-            if(!in_array($file,$this->exclude)){
-                $filesList[$key] = [
-                    'name' => $file,
-                    'path' => $dir . '/' . $file,
-                    'minPath' =>  $prePath . '/' .  $file,
-                    'pulicPath' =>  $this->filesFolder . $prePath .'/'. $file,
-                    'type' => is_dir($dir . '/' . $file)?'dir':'file',
-                    'url' => env('APP_URL') . '/' . $this->filesFolder . $prePath .'/'. $file,
-                ];
-                if($filesList[$key]['type'] == 'file'){
-                    $path_parts = pathinfo($filesList[$key]['path']);
-                    $filesList[$key]['extension'] = $path_parts['extension'] ?? '';
-                    $filesList[$key]['filename'] = $path_parts['filename'] ?? '';
-                    $filesList[$key]['extension'] = $path_parts['extension'] ?? '';
-                    $filesList[$key]['date'] = filemtime(($filesList[$key]['path'])) ?? '';
-                    $filesList[$key]['thumbnail'] = $this->getThumbnailURI($filesList[$key]['path']);
-                }
-            }
-        }
-        return $filesList;
-    }
-
-    private function getFilesFromDir($dir){
-        $files = scandir($dir);
-        return $files;
-    }
-
-    private function getThumbnailURI($file){
-        $fileInfo = pathinfo($file);
-        $thumbnailName = $fileInfo['filename'] . '100_100fit.' . $fileInfo['extension'];
-        $prePath = str_replace($this->pathToFiles,'',$fileInfo['dirname']);
-        if(in_array(strtolower($fileInfo['extension']),$this->imagesOrigin)){
-            return env('APP_URL') . '/' . $this->filesFolder .  $prePath . '/' . $fileInfo['basename'];
-        }else if(file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName)){
-           return env('APP_URL') . '/' . $this->filesFolder .  $prePath . '/__thumbnails__/'.$thumbnailName;
-        }
-        return '';
+        return response()->json(['success'=>'ok','html'=>$returnHTML],200);
     }
 
 
-    private function sortFiles($files){
-        $dirsArray = [];
-        $filesArray = [];
-        foreach($files as $file){
-            if($file['type']=='dir'){
-                $dirsArray[] = $file;
-            }else{
-                $filesArray[] = $file;
-            }
-        }
-        usort($filesArray, function($a, $b) {
-            return $b['date'] <=> $a['date'];
-        });
-
-        return array_merge($dirsArray,$filesArray);
-    }
-
-    private function setName($name,$dir){
-        $transliteration = new Transliteration();
-        $newName = $transliteration->clean_filename($name);
-
-        $files = $this->getFilesFromDir($dir);
-
-        $newName = $this->uniqName($newName,$files);
-
-        return $newName;
-    }
-
-    private function uniqName($name,$files){
-        if(in_array($name,$files)){
-            $name = '1_' . $name;
-            $name = $this->uniqName($name,$files);
-        }
-        return $name;
-    }
-
-
-    private function generateBreadcrumbs($path){
-        $breadCrumbs = [['title'=>'Home','path'=>'']];
-        $toPath = '';
-        $breadcrumbsItems = explode('/',$path);
-        if($breadcrumbsItems){
-            foreach ($breadcrumbsItems as $bcItem) {
-                if ($bcItem){
-                     $toPath .= '/' . $bcItem;
-                    $breadCrumbs[] = ['title' => $bcItem, 'path' => $toPath];
-                }
-            }
-        }
-        return $breadCrumbs;
-    }
 
 
 }
