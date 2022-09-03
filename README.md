@@ -11,5 +11,5 @@
     <link href="/vendor/laravel-files/css/pahar-laravel-files.css" rel="stylesheet">
 
 ### Компоненти
-#### Вивести поле з картинкою
+#### Вивести поле для вибору файлу
     <x-plf-field :name="$name" :value="$value"\/\>
