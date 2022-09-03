@@ -12,40 +12,45 @@
     position: fixed;
     width: 100%;
     max-width: 900px;
-    height: 100%;
-    max-height: 600px;
     background: #fff;
     top: 50%;
     z-index: 10001;
     left: 50%;
     transform: translate(-50%,-50%);
-    overflow-y: auto;
 }
 .plf-new-folder-pop .input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3),
-.plf-new-folder-pop .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
+.plf-new-folder-pop .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu),
+.plf-search-pop .input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3),
+.plf-search-pop .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
 .plf-new-folder-pop .input-group>.form-control,
 .plf-new-folder-pop .input-group>.form-file,
-.plf-new-folder-pop .input-group>.form-select {
+.plf-new-folder-pop .input-group>.form-select,
+.plf-search-pop .input-group>.form-control,
+.plf-search-pop .input-group>.form-file,
+.plf-search-pop .input-group>.form-select {
     flex: 1 1 auto;
     margin-bottom: 0;
     position: relative;
     width: 1%;
 }
-.plf-new-folder-pop .input-group {
+.plf-new-folder-pop .input-group,
+.plf-search-pop .input-group {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
-.plf-new-folder-pop .input-group {
+.plf-new-folder-pop .input-group,
+.plf-search-pop .input-group {
     align-items: stretch;
     display: flex;
     flex-wrap: wrap;
     position: relative;
     width: 100%;
 }
-.plf-new-folder-pop .form-control {
+.plf-new-folder-pop .form-control,
+.plf-search-pop .form-control {
     background-clip: padding-box;
     background-color: #fff;
     border: 1px solid #eaedf1;
@@ -60,10 +65,12 @@
     width: 100%;
     outline: none!important;
 }
-.plf-new-folder-pop .form-control:focus {
+.plf-new-folder-pop .form-control:focus,
+.plf-search-pop .form-control:focus {
     border-color: #8fbd56;
 }
-.plf-new-folder-pop{
+.plf-new-folder-pop,
+.plf-search-pop{
     display: none;
     padding: 10px;
 }
@@ -86,22 +93,23 @@
     opacity: 0.7;
 }
 .plf-popup-inner {
-    height: 100%;
     position: relative;
-}
-.plf-popup-outer{
-    height: 100%;
 }
 .plf-body{
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    height: 600px;
+    max-height: calc(100vh - 190px);
+    overflow-y: auto;
 }
 .plf-file-item{
     width: 150px;
-    margin: 10px 10px 0 10px;
+    margin: 5px 10px;
     padding: 5px;
     cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
 }
 .plf-filename{
     display: block;
@@ -115,10 +123,9 @@
     width: 100px;
     margin: 0 auto;
 }
-.plf-file-extension{
+.plf-file-extension,
+.plf-field-body-extension{
     position: absolute;
-}
-.plf-file-extension{
     top: 50%;
     left: 50%;
     transform: translate(-50%,0);
@@ -137,7 +144,8 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    height: 720px;
+    max-height: 90vh;
 }
 .lds-grid div {
     position: absolute;
@@ -266,3 +274,68 @@
 .plf-files-form input{
     display: none;
 }
+.plf-file-item-file .plf-file-img{
+    background-color: #f3f3f3;
+}
+.plf-pop-remove,.plf-field-remove{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 50%;
+    border: none;
+    background: red;
+    color: #fff;
+    line-height: 1;
+    padding: 0;
+    font-size: 20px;
+    width: 26px;
+    height: 26px;
+    opacity: 0;
+    visibility: hidden;
+    transition-duration: 0.2s;
+}
+.plf-file-item:hover .plf-pop-remove,
+.plf-field-outer:hover .plf-field-remove{
+    opacity: 0.5;
+    visibility: visible;
+}
+.plf-file-item .plf-pop-remove:hover,
+.plf-field-outer .plf-field-remove:hover{
+    opacity: 1;
+}
+.plf-field-body img{
+    max-width: 100%;
+    display: block;
+    position: relative;
+    max-height: 100%;
+    margin: 0 auto;
+    background-color: #e2e8f0;
+}
+.plf-field-body {
+    width: 110px;
+    height: 110px;
+    border: 2px solid #8fbd56;
+    padding: 3px;
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.plf-field-name{
+    padding-top: 3px;
+    font-size: 14px;
+    word-break: break-all;
+    text-align: center;
+}
+.plf-field-outer{
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    padding: 5px;
+    position: relative;
+}
+

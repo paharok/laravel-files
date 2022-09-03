@@ -16,11 +16,11 @@
         <button class="plf-pop-remove" data-path="{{ $file['minPath'] }}"
                 @if($file['type'] == 'dir')
                     data-action="{{ route('laravel-files.removeDir') }}"
-                data-confirm="@lang('laravelfiles::plf.questRemoveDir')"
+                    data-confirm="@lang('laravelfiles::plf.questRemoveDir')"
                 @else
+                    data-action="{{ route('laravel-files.removeFile') }}"
                     data-confirm="@lang('laravelfiles::plf.questRemoveFile')"
-                data-action="{{ route('laravel-files.removeFile') }}"
             @endif
-        >✖</button>
+        >&#10006;</button>
     </div>
 @endforeach

@@ -88,6 +88,7 @@ class LaravelFilesController extends Controller
 
         $files = $laravelFiles->searchFiles($currentFolder,$s);
         $data['files'] = $laravelFiles->formatedFiles($files,$currentFolder);
+        $data['files'] = $laravelFiles->sortFiles($data['files']);
 
         $returnHTML = view('laravelfiles::partials.items',$data)->render();
 
