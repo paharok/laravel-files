@@ -12,4 +12,4 @@
 
 ### Компоненти
 #### Вивести поле для вибору файлу
-    <x-plf-field :name="$name" :value="$value"\/\>
+    <x-plf-field :name="$name" :value="$value"/>
