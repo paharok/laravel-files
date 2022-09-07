@@ -4,7 +4,7 @@
     composer require paharok/laravel-files
 
 ### Публікація
-    php artisan vendor:publish laravelfiles
+    php artisan vendor:publish Paharok\Laravelfiles\Providers\LaraveFilesServiceProvider
 
 ### Підключення стилей та скриптів
     <script src="/vendor/laravel-files/js/pahar-laravel-files.js"></script>
