@@ -1,5 +1,5 @@
 <div {{ $attributes->merge(['class' => 'plf-field-outer']) }}>
-    <button class="plf-field-remove">&#10006;</button>
+    <button class="plf-field-remove" type="button">&#10006;</button>
     <div class="plf-field-body">
         <img src="{{ $thumbnail }}" class="plf-field-img" data-placeholder="{{ $placeholder }}">
         @if($needExtension)

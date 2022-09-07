@@ -13,7 +13,7 @@
         </div>
         <span class="plf-filename">{{ $file['name'] }}</span>
 
-        <button class="plf-pop-remove" data-path="{{ $file['minPath'] }}"
+        <button class="plf-pop-remove" type="button" data-path="{{ $file['minPath'] }}"
                 @if($file['type'] == 'dir')
                     data-action="{{ route('laravel-files.removeDir') }}"
                     data-confirm="@lang('laravelfiles::plf.questRemoveDir')"

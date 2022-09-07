@@ -9,7 +9,7 @@ jQuery(document).ready(function($){
             let plfPopup = "<div class='plf-bg'></div>";
             plfPopup += "<div class='plf-popup'>"+
                 "<div class='plf-popup-outer'>" +
-                "<button class='plf-close'>&#10006;</button>" +
+                "<button class='plf-close' type='button'>&#10006;</button>" +
                 "<div class='plf-popup-inner'></div>"+
                 "</div>"
             "</div>";

@@ -7,8 +7,8 @@
     php artisan vendor:publish --tag=laravelfiles  --force
 
 ### Підключення стилей та скриптів
-    <script src="/vendor/laravel-files/js/pahar-laravel-files.js"></script>
-    <link href="/vendor/laravel-files/css/pahar-laravel-files.css" rel="stylesheet">
+    <script src="{{ asset('/vendor/laravel-files/js/pahar-laravel-files.js') }}"></script>
+    <link href="{{ asset('/vendor/laravel-files/css/pahar-laravel-files.css') }}" rel="stylesheet">
 
 ### Компоненти
 #### Вивести поле для вибору файлу
