@@ -5,6 +5,9 @@
 
 ### Публікація
     php artisan vendor:publish --tag=laravelfiles  --force
+## Оновлення
+### Очищення кешу компонентів
+    php artisan view:clear
 
 ### Підключення стилей та скриптів
     <script src="{{ asset('/vendor/laravel-files/js/pahar-laravel-files.js') }}"></script>
