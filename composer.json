@@ -20,7 +20,10 @@
         "laravel": {
             "providers": [
                 "Paharok\\Laravelfiles\\Providers\\LaraveFilesServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "ChangeImage": "Paharok\\Laravelfiles\\Helpers\\ChangeImageIntervention"
+            }
         }
     },
     "autoload": {
