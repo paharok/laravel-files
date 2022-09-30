@@ -18,6 +18,12 @@ class ChangeImageIntervention implements ChangeImage{
 
             $filePath = 'vendor/laravel-files/files/no-img.png';
         }
+
+        $checkSVG = SELF::checkSVG($filePath);
+        if($checkSVG){
+            return $checkSVG;
+        }
+
         $image_size = getimagesize(public_path() . $filePath);
 
 
@@ -88,6 +94,8 @@ class ChangeImageIntervention implements ChangeImage{
         return [
             'main_uri'=> $cache_dir . str_replace(' ','%20',$newFileName),
             'original_uri'=> str_replace(' ','%20',$filePath),
+            'originalSizes'=>[$image_size[0],$image_size[1]],
+            'newSizes'=>[$width,$height],
             'sources'=>[
                 'image/webp'=> $cache_dir . str_replace(' ','%20',$newFileNameWebp),
                 $mainMime=> $cache_dir . str_replace(' ','%20',$newFileName)
@@ -96,6 +104,21 @@ class ChangeImageIntervention implements ChangeImage{
 
         ];
 
+    }
+
+
+    private static function checkSVG($filePath){
+        $path_parts = pathinfo($filePath);
+        if($path_parts['extension'] == 'svg'){
+            return [
+                'main_uri'=> str_replace(' ','%20',$filePath),
+                'original_uri'=> str_replace(' ','%20',$filePath),
+                'sources'=>[
+                    'image/svg+xml'=> str_replace(' ','%20',$filePath)
+                ]
+
+            ];
+        }
     }
 
 }
