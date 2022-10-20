@@ -121,6 +121,13 @@ class ChangeImageIntervention implements ChangeImage{
         }
     }
 
+
+    public static function isSupportWebp(){
+        if(!empty($_SERVER['HTTP_ACCEPT']) && strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false){
+            return true;
+        }
+    }
+
 }
 
 ?>
