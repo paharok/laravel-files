@@ -10,13 +10,10 @@ class ChangeImageIntervention implements ChangeImage{
 
     public static function changeImage($filePath,$width=0,$height=0,$crop='fit'){
 
-        if(mb_substr($filePath,0,1) != '/'){
-            $filePath = '/' . $filePath;
-        }
-
         if(!$filePath || !file_exists(public_path() . $filePath)){
-
-            $filePath = 'vendor/laravel-files/files/no-img.png';
+            $filePath = '/vendor/laravel-files/files/no-img.png';
+        }else if(mb_substr($filePath,0,1) != '/'){
+            $filePath = '/' . $filePath;
         }
 
         $checkSVG = SELF::checkSVG($filePath);
