@@ -44,8 +44,8 @@ class ChangeImageIntervention implements ChangeImage{
 
         $mainMime = mime_content_type(public_path() . $filePath);
         $cache_dir = $path_parts['dirname'] . '/__thumbnails__/';
-        $newFileName = $path_parts['filename'] . $width . '_'.$height . $crop . $position . '.'. $path_parts['extension'];
-        $newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop . $position . '.webp';
+        $newFileName = $path_parts['filename'] . $width . '_'.$height . $crop  . '.'. $path_parts['extension'];
+        $newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop  . '.webp';
 
         if(!file_exists(public_path() . '/' . $cache_dir . $newFileName)){
 
