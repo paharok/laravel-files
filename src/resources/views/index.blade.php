@@ -61,7 +61,9 @@
 
     </div>
     <div class="plf-body">
-        @include('laravelfiles::partials.items')
+        <div class="plf-body-inner">
+            @include('laravelfiles::partials.items')
+        </div>
     </div>
 </div>
 

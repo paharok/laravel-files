@@ -100,11 +100,15 @@
 }
 .plf-body{
     display: block;
-    flex-wrap: wrap;
-    justify-content: flex-start;
     height: 600px;
     max-height: calc(100vh - 190px);
     overflow-y: auto;
+}
+.plf-body-inner{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 .plf-file-item{
     width: 150px;

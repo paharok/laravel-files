@@ -22,7 +22,7 @@ const plf = {
     },
     close: function (){
         plf.target = false;
-        $('body').find('.plf-bg,.plf-popup').remove();
+        $(document).find('.plf-bg,.plf-popup').remove();
     },
     getData:function(path = ''){
         plfSetCookie('plfLastPath',path);
@@ -30,10 +30,10 @@ const plf = {
             type:'get',
             url:'/laravel-files?path=' + path,
             beforeSend: function(){
-                $('body').find('.plf-popup-inner').html(plfLoader);
+                $(document).find('.plf-popup-inner').html(plfLoader);
             },
             success: function(ans){
-                $('body').find('.plf-popup-inner').html(ans);
+                $(document).find('.plf-popup-inner').html(ans);
             }
         })
     }
@@ -41,7 +41,7 @@ const plf = {
 
 
 
-$('body').on('click','.plf-field-body',function(e){
+$(document).on('click','.plf-field-body',function(e){
     plf.target = $(e.target).closest('.plf-field-outer');
     let lastPath = plfGetCookie('plfLastPath');
     if(!lastPath){
@@ -51,19 +51,19 @@ $('body').on('click','.plf-field-body',function(e){
     plf.getData(lastPath);
 })
 
-$('body').on('click','.plf-close,.plf-bg',function(){
+$(document).on('click','.plf-close,.plf-bg',function(){
     plf.close();
 });
 
-$('body').on('click','.plf-addFolder',function(){
-    $('body').find('.plf-new-folder-pop').slideToggle();
+$(document).on('click','.plf-addFolder',function(){
+    $(document).find('.plf-new-folder-pop').slideToggle();
 })
-$('body').on('click','.plf-cancelFolder',function(){
-    $('body').find('.plf-new-folder-pop').slideUp();
-    $('body').find('.plf-new-folder-form').find('input[name="foldername"]').val('');
+$(document).on('click','.plf-cancelFolder',function(){
+    $(document).find('.plf-new-folder-pop').slideUp();
+    $(document).find('.plf-new-folder-form').find('input[name="foldername"]').val('');
 })
-$('body').on('click','.plf-newFolder',function (){
-    let form =  $('body').find('.plf-new-folder-form');
+$(document).on('click','.plf-newFolder',function (){
+    let form =  $(document).find('.plf-new-folder-form');
     let url = form.attr('action');
     $.ajax({
         type:'post',
@@ -80,11 +80,11 @@ $('body').on('click','.plf-newFolder',function (){
 });
 
 
-$('body').on('click','.plf-search',function(){
-    $('body').find('.plf-search-pop').slideToggle();
+$(document).on('click','.plf-search',function(){
+    $(document).find('.plf-search-pop').slideToggle();
 })
-$('body').on('click','.plf-cancelSearch',function(){
-    $('body').find('.plf-search-pop').slideUp();
+$(document).on('click','.plf-cancelSearch',function(){
+    $(document).find('.plf-search-pop').slideUp();
     let lastPath = plfGetCookie('plfLastPath');
     if(!lastPath){
         lastPath = '';
@@ -92,8 +92,8 @@ $('body').on('click','.plf-cancelSearch',function(){
     plf.getData(lastPath);
 });
 
-$('body').on('click','.plf-go-search',function (){
-    let form =  $('body').find('.plf-search-form');
+$(document).on('click','.plf-go-search',function (){
+    let form =  $(document).find('.plf-search-form');
     let url = form.attr('action');
     let s = form.find('input[name="s"]').val();
     if(s.length<=0){
@@ -110,14 +110,14 @@ $('body').on('click','.plf-go-search',function (){
         data:form.serialize(),
         success: function(ans){
             if(ans.success !== undefined){
-                $('body').find('.plf-body').html(ans.html);
+                $(document).find('.plf-body .plf-body-inner').html(ans.html);
             }
         }
     })
 });
 
 
-$('body').on('dblclick','.plf-file-item-dir',function(){
+$(document).on('dblclick','.plf-file-item-dir',function(){
     let path = $(this).attr('data-path');
     plf.getData(path);
 });
@@ -126,16 +126,16 @@ $('body').on('dblclick','.plf-file-item-dir',function(){
 
 
 
-$('body').on('click','.plf-path li.plf-path-li',function(){
+$(document).on('click','.plf-path li.plf-path-li',function(){
     let path = $(this).attr('data-path');
     plf.getData(path);
 })
 
 
-$('body').on('click','.plf-files-form button',function(){
+$(document).on('click','.plf-files-form button',function(){
     $(this).siblings('input').trigger('click');
 });
-$('body').on('change','.plf-files-form input',function(){
+$(document).on('change','.plf-files-form input',function(){
     let form = $(this).closest('form');
     let action = form.attr('action');
     let token = form.find('input[name="_token"]').val();
@@ -166,7 +166,7 @@ $('body').on('change','.plf-files-form input',function(){
 });
 
 
-$('body').on('click','.plf-file-item .plf-pop-remove',function(){
+$(document).on('click','.plf-file-item .plf-pop-remove',function(){
     let confirmText = $(this).attr('data-confirm');
     if(!confirm(confirmText)){
         return false;
@@ -186,7 +186,7 @@ $('body').on('click','.plf-file-item .plf-pop-remove',function(){
     })
 });
 
-$('body').on('dblclick','.plf-file-item-file',function(){
+$(document).on('dblclick','.plf-file-item-file',function(){
     let publicPath = $(this).attr('data-publicPath');
     let name = $(this).find('.plf-filename').text();
     let thumb = $(this).find('.plf-file-img img').attr('src');
@@ -208,7 +208,8 @@ $('body').on('dblclick','.plf-file-item-file',function(){
     plf.close();
 });
 
-$('body').on('click','.plf-field-remove',function(){
+$(document).on('click','.plf-field-remove',function(){
+
     let outer = $(this).closest('.plf-field-outer');
     let placeholder = outer.find('.plf-field-body img').attr('data-placeholder');
     outer.find('.plf-field-body img').attr('src',placeholder);
@@ -216,8 +217,6 @@ $('body').on('click','.plf-field-remove',function(){
     outer.find('input[type="hidden"]').val('');
     outer.find('.plf-field-body-extension').remove();
 });
-
-
 
 
 //});
