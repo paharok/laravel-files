@@ -8,7 +8,7 @@ use Intervention\Image\Facades\Image AS Image;
 class ChangeImageIntervention implements ChangeImage{
 
 
-    public static function changeImage($filePath,$width=0,$height=0,$crop='fit'){
+    public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center'){
 
         if(mb_substr($filePath,0,1) != '/'){
             $filePath = '/' . $filePath;
@@ -44,8 +44,8 @@ class ChangeImageIntervention implements ChangeImage{
 
         $mainMime = mime_content_type(public_path() . $filePath);
         $cache_dir = $path_parts['dirname'] . '/__thumbnails__/';
-        $newFileName = $path_parts['filename'] . $width . '_'.$height . $crop . '.'. $path_parts['extension'];
-        $newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop . '.webp';
+        $newFileName = $path_parts['filename'] . $width . '_'.$height . $crop . $position . '.'. $path_parts['extension'];
+        $newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop . $position . '.webp';
 
         if(!file_exists(public_path() . '/' . $cache_dir . $newFileName)){
 
@@ -61,10 +61,11 @@ class ChangeImageIntervention implements ChangeImage{
             }
 
             if($crop=='fit'){
+
                 $image->fit($width, $height, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
-                });
+                },$position);
             }elseif($crop=='resize'){
                 $image->resize($width, $height, function ($constraint) {
                     $constraint->aspectRatio();
