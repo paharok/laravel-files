@@ -338,6 +338,7 @@
     font-size: 14px;
     word-break: break-all;
     text-align: center;
+    white-space: break-spaces;
 }
 .plf-field-outer{
     width: 120px;
