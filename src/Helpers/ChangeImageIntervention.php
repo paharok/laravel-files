@@ -85,8 +85,8 @@ class ChangeImageIntervention implements ChangeImage{
 
 
 
-            $image->save(public_path() . $cache_dir . $newFileName);
-            $image->save(public_path() . $cache_dir . $newFileNameWebp);
+            $image->save(public_path() . $cache_dir . $newFileName,100);
+            $image->save(public_path() . $cache_dir . $newFileNameWebp,100);
         }
 
         $cache_dir = str_replace(' ','%20',$cache_dir);
