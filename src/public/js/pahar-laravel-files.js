@@ -192,8 +192,18 @@ $(document).on('dblclick','.plf-file-item-file',function(){
     let thumb = $(this).find('.plf-file-img img').attr('src');
 
     if(plf.target.container !== undefined){
-        console.log(plf.target.container);
-        plf.target.insertHtml("<img src='/"+ publicPath +"' />");
+        let imagesArr = ['jpg','jpeg','png','webp','svg'];
+        let re = /(?:\.([^.]+))?$/;
+        let ext = re.exec(publicPath)[1];
+
+        if(imagesArr.includes(ext.toLowerCase())){
+            plf.target.insertHtml("<img src='/"+ publicPath +"' />");
+        }else{
+            let filename = publicPath.replace(/^.*[\\\/]/, '');
+            let downloadLink = "<a href='/"+ publicPath +"' download='"+ filename +"'>"+ filename +"</a>";
+            plf.target.insertHtml(downloadLink);
+        }
+
     }else{
         plf.target.find('.plf-field-body img').attr('src',thumb);
         plf.target.find('.plf-field-name').text(name);
