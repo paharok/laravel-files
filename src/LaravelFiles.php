@@ -2,7 +2,7 @@
 
 namespace Paharok\Laravelfiles;
 
-use That0n3guy\Transliteration\Transliteration AS Transliteration;
+use Illuminate\Support\Str;
 use Paharok\Laravelfiles\Helpers\ChangeImageIntervention as ChangeImage;
 
 use File;
@@ -161,8 +161,8 @@ class LaravelFiles
     }
 
     public function setName($name,$dir){
-        $transliteration = new Transliteration();
-        $newName = $transliteration->clean_filename($name);
+
+        $newName = Str::slug($name);
 
         $files = $this->getFilesFromDir($dir);
 
