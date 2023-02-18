@@ -160,9 +160,22 @@ class LaravelFiles
         return array_merge($dirsArray,$filesArray);
     }
 
-    public function setName($name,$dir){
+    public function setName($name,$dir,$is_file = true){
 
-        $newName = Str::slug($name);
+        if($is_file){
+            $dotPosition = mb_strripos($name,'.');
+            if($dotPosition>=0){
+                $ext = mb_substr($name,$dotPosition);
+                $nameWithoutExt = str_replace($ext,'',$name);
+                $newName = Str::slug($nameWithoutExt) . $ext;
+            }else{
+                $newName = Str::slug($name);
+            }
+        }else{
+            $newName = Str::slug($name);
+        }
+
+
 
         $files = $this->getFilesFromDir($dir);
 

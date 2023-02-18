@@ -30,7 +30,7 @@ class LaravelFilesController extends Controller
 
         $currentFolder = $laravelFiles->getPathToFiles() . $request->input('currentFolder');
 
-        $folderName = $laravelFiles->setName($request->input('foldername'),$currentFolder);
+        $folderName = $laravelFiles->setName($request->input('foldername'),$currentFolder,false);
 
         $laravelFiles->makeDirectory($currentFolder . '/' . $folderName);
 
