@@ -80,6 +80,15 @@ $(document).on('click','.plf-newFolder',function (){
 });
 
 
+$(document).on('keypress','.plf-new-folder-form input[name="foldername"]',function (e) {
+    if (e.which == 13) {
+        $(this).closest('form').find('.plf-newFolder').trigger('click');
+        return false;
+    }
+});
+
+
+
 $(document).on('click','.plf-search',function(){
     $(document).find('.plf-search-pop').slideToggle();
 })
@@ -115,7 +124,12 @@ $(document).on('click','.plf-go-search',function (){
         }
     })
 });
-
+$(document).on('keypress', '.plf-search-form input[name="s"]', function (e) {
+    if (e.which == 13) {
+        $(this).closest('form').find('.plf-go-search').trigger('click');
+        return false;
+    }
+});
 
 $(document).on('dblclick','.plf-file-item-dir',function(){
     let path = $(this).attr('data-path');
