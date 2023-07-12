@@ -54,10 +54,15 @@ class ChangeImageIntervention implements ChangeImage{
             $image = Image::make(public_path() . $filePath);
 
 
-            if($image->exif('Orientation') == 6){
+            if(in_array($image->exif('Orientation'),[3,4])){
+                $image->rotate(180);
+            }elseif(in_array($image->exif('Orientation'),[5,6])){
                 $image->rotate(-90);
-            }elseif ($image->exif('Orientation') == 8){
+            }elseif(in_array($image->exif('Orientation'),[7,8])){
                 $image->rotate(90);
+            }
+            if (in_array($image->exif('Orientation'), [2, 5, 7, 4])) {
+                $image->flip('h');
             }
 
 
