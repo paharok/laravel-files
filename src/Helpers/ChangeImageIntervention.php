@@ -51,7 +51,8 @@ class ChangeImageIntervention implements ChangeImage{
 
 
 
-            $image = Image::make(public_path() . $filePath)->orientate();
+            $image = Image::make(public_path() . $filePath);
+
 
 
 
