@@ -54,6 +54,12 @@ class ChangeImageIntervention implements ChangeImage{
             $image = Image::make(public_path() . $filePath);
 
 
+            if($image->exif('Orientation') == 6){
+                $image->rotate(-90);
+            }elseif ($image->exif('Orientation') == 8){
+                $image->rotate(90);
+            }
+
 
 
             if(!file_exists(public_path() . $cache_dir)){
