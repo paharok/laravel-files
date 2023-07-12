@@ -55,7 +55,6 @@ class ChangeImageIntervention implements ChangeImage{
 
 
 
-
             if(!file_exists(public_path() . $cache_dir)){
                 mkdir(public_path() . $cache_dir,0775,true);
             }
