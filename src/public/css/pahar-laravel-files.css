@@ -103,6 +103,7 @@
     height: 600px;
     max-height: calc(100vh - 190px);
     overflow-y: auto;
+    color: #000;
 }
 .plf-body-inner{
     display: flex;
