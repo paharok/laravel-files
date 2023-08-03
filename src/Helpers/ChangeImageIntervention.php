@@ -23,8 +23,13 @@ class ChangeImageIntervention implements ChangeImage{
             return $checkSVG;
         }
 
+
         $image_size = getimagesize(public_path() . $filePath);
 
+        $checkGif = SELF::checkGif($filePath,$image_size);
+        if($checkGif){
+            return $checkGif;
+        }
 
         if($width==0 && $height==0){
             $width = $image_size[0];
@@ -126,6 +131,23 @@ class ChangeImageIntervention implements ChangeImage{
                 'original_uri'=> str_replace(' ','%20',$filePath),
                 'sources'=>[
                     'image/svg+xml'=> str_replace(' ','%20',$filePath)
+                ]
+
+            ];
+        }
+    }
+
+
+    private static function checkGif($filePath,$image_size = [0=>0,1=>0]){
+        $path_parts = pathinfo($filePath);
+        if($path_parts['extension'] == 'gif'){
+            return [
+                'main_uri'=> str_replace(' ','%20',$filePath),
+                'original_uri'=> str_replace(' ','%20',$filePath),
+                'originalSizes'=>[$image_size[0],$image_size[1]],
+                'newSizes'=>[$image_size[0],$image_size[1]],
+                'sources'=>[
+                    'image/gif'=> str_replace(' ','%20',$filePath)
                 ]
 
             ];
