@@ -6,7 +6,7 @@ use Paharok\Laravelfiles\Helpers\Contracts\ChangeImage;
 use Intervention\Image\Facades\Image AS Image;
 
 class ChangeImageIntervention implements ChangeImage{
-
+    public static $mimes = ['image/jpg','image/jpeg','image/png','image/webp','image/bmp'];
 
     public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center'){
 
@@ -21,6 +21,11 @@ class ChangeImageIntervention implements ChangeImage{
         $checkSVG = SELF::checkSVG($filePath);
         if($checkSVG){
             return $checkSVG;
+        }
+
+        $mainMime = mime_content_type(public_path() . $filePath);
+        if(!in_array($mainMime,SELF::$mimes)){
+            $filePath = '/vendor/laravel-files/files/no-img.png';
         }
 
 
@@ -47,7 +52,7 @@ class ChangeImageIntervention implements ChangeImage{
 
         $path_parts = pathinfo($filePath);
 
-        $mainMime = mime_content_type(public_path() . $filePath);
+
         $cache_dir = $path_parts['dirname'] . '/__thumbnails__/';
         $newFileName = $path_parts['filename'] . $width . '_'.$height . $crop  . '.'. $path_parts['extension'];
         $newFileNameWebp = $path_parts['filename'] . $width . '_'.$height . $crop  . '.webp';
