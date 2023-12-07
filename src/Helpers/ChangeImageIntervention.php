@@ -6,7 +6,7 @@ use Paharok\Laravelfiles\Helpers\Contracts\ChangeImage;
 use Intervention\Image\Facades\Image AS Image;
 
 class ChangeImageIntervention implements ChangeImage{
-    public static $mimes = ['image/jpg','image/jpeg','image/png','image/webp','image/bmp'];
+    public static $mimes = ['image/jpg','image/jpeg','image/png','image/webp','image/bmp','image/gif'];
 
     public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center'){
 
