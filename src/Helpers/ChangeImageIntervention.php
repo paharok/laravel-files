@@ -14,6 +14,7 @@ class ChangeImageIntervention implements ChangeImage{
             $filePath = '/' . $filePath;
         }
 
+
         $path_parts = pathinfo($filePath);
 
         if($filePath==='/' || !$filePath || !file_exists(public_path() . $filePath) || empty($path_parts['extension'])){
