@@ -22,7 +22,6 @@ class ChangeImageIntervention implements ChangeImage{
             $path_parts = pathinfo($filePath);
         }
 
-
         $checkSVG = SELF::checkSVG($filePath);
         if($checkSVG){
             return $checkSVG;
