@@ -14,9 +14,12 @@ class ChangeImageIntervention implements ChangeImage{
             $filePath = '/' . $filePath;
         }
 
-        if($filePath==='/' || !$filePath || !file_exists(public_path() . $filePath)){
+        $path_parts = pathinfo($filePath);
+
+        if($filePath==='/' || !$filePath || !file_exists(public_path() . $filePath) || empty($path_parts['extension'])){
             $filePath = '/vendor/laravel-files/files/no-img.png';
         }
+
 
         $checkSVG = SELF::checkSVG($filePath);
         if($checkSVG){
@@ -50,7 +53,7 @@ class ChangeImageIntervention implements ChangeImage{
         }
 
 
-        $path_parts = pathinfo($filePath);
+
 
 
         $cache_dir = $path_parts['dirname'] . '/__thumbnails__/';
