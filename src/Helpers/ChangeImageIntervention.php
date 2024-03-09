@@ -19,6 +19,7 @@ class ChangeImageIntervention implements ChangeImage{
 
         if($filePath==='/' || !$filePath || !file_exists(public_path() . $filePath) || empty($path_parts['extension'])){
             $filePath = '/vendor/laravel-files/files/no-img.png';
+            $path_parts = pathinfo($filePath);
         }
 
 
