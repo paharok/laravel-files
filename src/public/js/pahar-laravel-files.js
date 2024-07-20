@@ -28,7 +28,7 @@ const plf = {
         plfSetCookie('plfLastPath',path);
         $.ajax({
             type:'get',
-            url:'/laravel-files?path=' + path,
+            url:'/laravel-files?path=' + path + '&d='+Date.now(),
             beforeSend: function(){
                 $(document).find('.plf-popup-inner').html(plfLoader);
             },
