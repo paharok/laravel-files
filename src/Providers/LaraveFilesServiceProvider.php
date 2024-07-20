@@ -24,9 +24,11 @@ class LaraveFilesServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(Router $router)
     {
         //
+        $router->aliasMiddleware('plf.nocache', \Paharok\Laravelfiles\Http\Middleware\NoCache::class);
+
         $this->loadRoutesFrom(__DIR__.'/../routes/laravelfiles.php');
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravelfiles');
