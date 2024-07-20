@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\Blade;
 use Paharok\Laravelfiles\View\Components\FileFieldComponent;
+use Illuminate\Routing\Router;
 
 class LaraveFilesServiceProvider extends ServiceProvider
 {
