@@ -57,7 +57,7 @@ class LaravelFiles
                 continue;
             }
             $withoutMainName = str_replace(
-                [$filename,'fit','resize','resizebg'],
+                [$filename,'fit','resizebg','resize'],
                 ['','','',''],
                 $fileInfo['filename']
             );
