@@ -306,14 +306,37 @@
     transition-duration: 0.2s;
 }
 .plf-file-item:hover .plf-pop-remove,
+.plf-file-item:hover .plf-pop-rename,
 .plf-field-outer:hover .plf-field-remove{
     opacity: 0.5;
     visibility: visible;
 }
 .plf-file-item .plf-pop-remove:hover,
+.plf-file-item .plf-pop-rename:hover,
 .plf-field-outer .plf-field-remove:hover{
     opacity: 1;
 }
+
+.plf-pop-rename{
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 50%;
+    border: none;
+    background: blue;
+    color: #fff;
+    line-height: 1;
+    padding: 0;
+    font-size: 20px;
+    width: 26px;
+    height: 26px;
+    opacity: 0;
+    visibility: hidden;
+    transition-duration: 0.2s;
+}
+
 .plf-field-body img{
     max-width: 100%;
     display: block;

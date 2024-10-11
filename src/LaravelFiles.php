@@ -96,7 +96,7 @@ class LaravelFiles
                     'name' => $file,
                     'path' => $dir . '/' . $file,
                     'minPath' =>  $prePath . '/' .  $file,
-                    'pulicPath' =>  $this->filesFolder . $prePath .'/'. $file,
+                    'publicPath' =>  $this->filesFolder . $prePath .'/'. $file,
                     'type' => is_dir($dir . '/' . $file)?'dir':'file',
                     'url' => env('APP_URL') . '/' . $this->filesFolder . $prePath .'/'. $file,
                     'needExtension'=>false,
@@ -215,4 +215,62 @@ class LaravelFiles
         return File::deleteDirectory($dir);
     }
 
+
+    public function renameItem($path,$newName)
+    {
+        $fullPath = $this->getPathToFiles() . $path;
+
+        if(!file_exists($fullPath)){
+            return ['errors'=>['no file'=>__('laravelfiles::plf.No such file or directory')]];
+        }
+
+        $pathInfo = pathinfo($fullPath);
+
+        $data = [
+            'success'=>true,
+        ];
+
+        if(is_dir($fullPath)){
+            if($pathInfo['basename'] === $newName){
+                return ['errors'=>['no change name'=>__("laravelfiles::plf.It's same name!")]];
+            }
+            $newNameUniq = $this->setName($newName,$pathInfo['dirname'],false);
+
+            File::move($fullPath, $pathInfo['dirname'] . '/' . $newNameUniq);
+
+            if($newNameUniq !== $newName){
+                $data['info'] = __('laravelfiles::plf.rename_exists', [
+                    'newname' => $newName,
+                    'newnameuniq' => $newNameUniq
+                ]);
+            }
+
+        }else{
+            if($pathInfo['filename'] === $newName){
+                return ['errors'=>['no change name'=>__("laravelfiles::plf.It's same name!")]];
+            }
+
+            $thumbsDir =  $pathInfo['dirname'] . '/__thumbnails__';
+
+            if(is_dir($thumbsDir)){
+                $this->removeThumbnails($thumbsDir,$pathInfo['filename']);
+            }
+
+            $newNameUniq = $this->setName($newName . '.' . $pathInfo['extension'],$pathInfo['dirname']);
+
+            File::move($fullPath, $pathInfo['dirname'] . '/' . $newNameUniq);
+
+            $this->makeThumbnails($pathInfo['dirname'],$newNameUniq);
+
+            if($newNameUniq !== ($newName . '.' . $pathInfo['extension'])){
+                $data['info'] = __('laravelfiles::plf.rename_exists', [
+                    'newname' => $newName . '.' . $pathInfo['extension'],
+                    'newnameuniq' => $newNameUniq
+                ]);
+            }
+        }
+
+        return $data;
+
+    }
 }

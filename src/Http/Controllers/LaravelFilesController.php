@@ -96,6 +96,20 @@ class LaravelFilesController extends Controller
     }
 
 
+    public function rename(LaravelFiles $laravelFiles,Request $request)
+    {
+        if(!$request->ajax()){ abort(404); }
+
+        $path = $request->input('path');
+        $newName = $request->input('newName');
+
+        $result = $laravelFiles->renameItem($path,$newName);
+
+        if(!empty($result['errors'])){
+            return response()->json($result,422,[],JSON_UNESCAPED_UNICODE);
+        }
+        return response()->json($result,200,[],JSON_UNESCAPED_UNICODE);
+    }
 
 
 }

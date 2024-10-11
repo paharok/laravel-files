@@ -1,4 +1,5 @@
 <div class="plf-outer">
+    <input type="hidden" name="plf-token" class="plf-token" value="{{ csrf_token() }}">
     <div class="plf-header">
         @if($breadcrumbs)
         <ul class="plf-path">
@@ -37,7 +38,6 @@
         </div>
         <div class="plf-new-folder-pop">
             <form action="{{ route('laravel-files.newFolder') }}" class="plf-new-folder-form">
-                @csrf
                 <input type="hidden" name="currentFolder" value="{{ $currentFolder }}" >
                 <div class="input-group">
                     <input type="text" name="foldername" placeholder="Folder name" class="form-control">
@@ -48,7 +48,6 @@
         </div>
         <div class="plf-search-pop">
             <form action="{{ route('laravel-files.search') }}" class="plf-search-form">
-                @csrf
                 <input type="hidden" name="currentFolder" value="{{ $currentFolder }}" >
                 <div class="input-group">
                     <input type="text" name="s" placeholder="@lang("laravelfiles::plf.fileName")" class="form-control">

@@ -13,4 +13,10 @@ return [
 
     "errorEmptyField"=>"Празно поле",
     "errorSomethingWrong"=>"Нещо се обърка!",
+    "questRenameFile"=>"Преименуване на файл",
+    "questRenameDir"=>"Преименуване на директория",
+
+    "It's same name!"=>"Това е същото име!",
+    "rename_exists"=>":newname вече съществува. Новото име е :newnameuniq",
+    "No such file or directory"=> "Не съществува такъв файл или директория"
 ];

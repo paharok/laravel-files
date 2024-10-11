@@ -65,10 +65,14 @@ $(document).on('click','.plf-cancelFolder',function(){
 $(document).on('click','.plf-newFolder',function (){
     let form =  $(document).find('.plf-new-folder-form');
     let url = form.attr('action');
+    token = getPLFToken();
+    let data = form.serialize();
+    data += "&_token="+token;
+
     $.ajax({
         type:'post',
         url:url,
-        data:form.serialize(),
+        data:data,
         success: function(ans){
             let lastPath = plfGetCookie('plfLastPath');
             if(!lastPath){
@@ -113,10 +117,14 @@ $(document).on('click','.plf-go-search',function (){
         plf.getData(lastPath);
         return false;
     }
+    let data = form.serialize();
+    let token = getPLFToken();
+    data += "&_token="+ token;
+
     $.ajax({
         type:'post',
         url:url,
-        data:form.serialize(),
+        data:data,
         success: function(ans){
             if(ans.success !== undefined){
                 $(document).find('.plf-body .plf-body-inner').html(ans.html);
@@ -152,7 +160,7 @@ $(document).on('click','.plf-files-form button',function(){
 $(document).on('change','.plf-files-form input',function(){
     let form = $(this).closest('form');
     let action = form.attr('action');
-    let token = form.find('input[name="_token"]').val();
+    let token = getPLFToken();
     let folder = form.find('input[name="folder"]').val();
     let files = form.find('input[name="files"]');
     let data = new FormData();
@@ -161,7 +169,6 @@ $(document).on('change','.plf-files-form input',function(){
     });
     data.append('folder', folder);
     data.append('_token', token);
-
     $.ajax({
         type: 'post',
         url: action,
@@ -179,6 +186,46 @@ $(document).on('change','.plf-files-form input',function(){
     })
 });
 
+$(document).on('click','.plf-file-item .plf-pop-rename',function(){
+    let promptQuestion = $(this).attr('data-prompt');
+    let newName = prompt(promptQuestion, name);
+
+    if(!newName){
+        return false;
+    }
+
+    let path = $(this).attr('data-path');
+    let action = $(this).attr('data-action');
+    let token = getPLFToken();
+
+    $.ajax({
+        type: "post",
+        url: action,
+        data: {_token:token,path:path,newName:newName},
+        error:function (err1){
+            if(err1.responseJSON != undefined && err1.responseJSON.errors != undefined){
+                let errors = "";
+                for(i in err1.responseJSON.errors){
+                    errors += err1.responseJSON.errors[i] + "\n";
+                }
+                alert(errors);
+            }
+        },
+        success: function (ans){
+            if(ans.info){
+                alert(ans.info);
+            }
+
+            let lastPath = plfGetCookie('plfLastPath');
+            if(!lastPath){
+                lastPath = '';
+            }
+            plf.getData(lastPath);
+        }
+    })
+
+    console.log(newName);
+})
 
 $(document).on('click','.plf-file-item .plf-pop-remove',function(){
     let confirmText = $(this).attr('data-confirm');
@@ -188,10 +235,11 @@ $(document).on('click','.plf-file-item .plf-pop-remove',function(){
     let outer = $(this).closest('.plf-file-item');
     let path = $(this).attr('data-path');
     let action = $(this).attr('data-action');
+    let token = getPLFToken();
     $.ajax({
         type:'post',
         url:action,
-        data:{path:path},
+        data:{path:path,_token:token},
         success: function (ans){
             if(ans.success !== undefined){
                 outer.remove();
@@ -244,5 +292,7 @@ $(document).on('click','.plf-field-remove',function(){
     outer.find('.plf-field-body-extension').remove();
 });
 
-
+function getPLFToken(){
+    return $(document).find('.plf-outer .plf-token').val() ?? '';
+}
 //});
