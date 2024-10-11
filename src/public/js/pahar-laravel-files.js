@@ -295,4 +295,43 @@ $(document).on('click','.plf-field-remove',function(){
 function getPLFToken(){
     return $(document).find('.plf-outer .plf-token').val() ?? '';
 }
+
+$(document).on('dragenter dragover', '.plf-popup-inner', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).addClass('plf-file-drag-adding');
+});
+
+$(document).on('dragleave','.plf-popup-inner', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var relatedTarget = e.relatedTarget || e.originalEvent.relatedTarget;
+
+    if (!relatedTarget || !$(this).has(relatedTarget).length) {
+        $(this).removeClass('plf-file-drag-adding');
+    }
+});
+
+
+$(document).on('drop', '.plf-popup-inner', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let $this = $(this);
+    let files = e.originalEvent.dataTransfer.files;
+
+    if (files.length > 0) {
+        setTimeout(function() {
+            $this.removeClass('plf-file-drag-adding');
+            let fileInput = $this.find('#plf-file-input');
+
+            fileInput[0].files = files;
+
+            fileInput.trigger('change');
+        }, 100);
+    }
+});
+
+
 //});
