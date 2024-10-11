@@ -224,7 +224,6 @@ $(document).on('click','.plf-file-item .plf-pop-rename',function(){
         }
     })
 
-    console.log(newName);
 })
 
 $(document).on('click','.plf-file-item .plf-pop-remove',function(){
