@@ -4,7 +4,7 @@
     composer require paharok/laravel-files
 
 ### Публікація
-    php artisan vendor:publish --tag=laravelfiles  --force
+    php artisan vendor:publish --tag=laravel-assets  --force
 ## Оновлення
 ### Очищення кешу компонентів
     php artisan view:clear
