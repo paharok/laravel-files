@@ -273,4 +273,81 @@ class LaravelFiles
         return $data;
 
     }
+
+
+    public function groupRemove($items)
+    {
+        foreach ($items as $item) {
+            $fullPath = $this->getPathToFiles() . $item;
+            if(!file_exists($fullPath)){
+                continue;
+            }
+            if(is_dir($fullPath)){
+                $this->deleteDirectory($fullPath);
+            }else{
+                $pathInfo = pathinfo($fullPath);
+
+                unlink($fullPath);
+
+                $thumbsDir = $pathInfo['dirname'] . '/__thumbnails__';
+                if(is_dir($thumbsDir)){
+                    $this->removeThumbnails($thumbsDir,$pathInfo['filename']);
+                }
+            }
+        }
+        return ['success'=>true];
+    }
+
+    public function groupCopy($items, $path, $move = false)
+    {
+        $fullPathDesctination = $this->getPathToFiles() . $path;
+        foreach ($items as $item) {
+            $fullPath = $this->getPathToFiles() . $item;
+            if(!file_exists($fullPath)){
+                continue;
+            }
+            $fileNameWithExtension = basename($fullPath);
+
+            $newNameUniq = $this->setName($fileNameWithExtension,$fullPathDesctination);
+
+
+
+            if(is_dir($fullPath)){
+                if (strpos(realpath($fullPathDesctination), realpath($fullPath)) === 0) {
+                    continue;
+                }
+
+                $newDirectoryPath = $fullPathDesctination . '/' . $newNameUniq;
+
+                File::makeDirectory($newDirectoryPath,0755,true);
+
+                File::copyDirectory($fullPath, $newDirectoryPath);
+
+
+                if($move){
+                    File::deleteDirectory($fullPath);
+                }
+
+            }else{
+                $newFilePath = $fullPathDesctination . '/' . $newNameUniq;
+                File::copy($fullPath, $newFilePath);
+
+                $this->makeThumbnails($fullPathDesctination,$newNameUniq);
+
+                if($move){
+                    $pathInfo = pathinfo($fullPath);
+
+                    unlink($fullPath);
+
+                    $thumbsDir = $pathInfo['dirname'] . '/__thumbnails__';
+                    if(is_dir($thumbsDir)){
+                        $this->removeThumbnails($thumbsDir,$pathInfo['filename']);
+                    }
+                }
+
+            }
+        }
+        return ['success'=>true];
+    }
+
 }

@@ -32,5 +32,6 @@
                 @endif
 
         >&#9998;</button>
+
     </div>
 @endforeach

@@ -138,6 +138,10 @@
     position: relative;
     display: inline-block;
 }
+.plf-file-item.plf-checked{
+    background: #b6edff;
+    border-radius: 8px;
+}
 .plf-filename{
     display: block;
     width: 100%;
@@ -388,4 +392,69 @@
     padding: 5px;
     position: relative;
 }
+.plf-group-btns button.done:after{
+    content: '\2713';
+    margin-left: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1;
+}
 
+.plf-group-btns button.loading:after {
+    content: '';
+    top: 50%;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    margin-left: 3px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.plf-group-btns button{
+    cursor: pointer;
+    color: #fff;
+    border-radius: 3px;
+    padding: 5px 5px;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 5px;
+    display: none;
+}
+.plf-group-btns .plf-files-copy{
+    border: 1px solid #28a745;
+    background: #28a745;
+}
+.plf-group-btns .plf-files-cut{
+    border: 1px solid #17a2b8;
+    background: #17a2b8;
+}
+.plf-group-btns .plf-files-put{
+    border: 1px solid #007bff;
+    background: #007bff;
+}
+.plf-group-btns .plf-files-remove{
+    border: 1px solid #dc3545;
+    background: #dc3545;
+}
+.plf-group-btns .plf-files-cancel{
+    border: 1px solid #ffc107;
+    background: #ffc107;
+}
+.plf-group-btns{
+    padding: 0 5px;
+    display: flex;
+}

@@ -36,6 +36,13 @@
                 <span>@lang("laravelfiles::plf.search")</span>
             </button>
         </div>
+        <div class="plf-group-btns">
+            <button type="button" class="plf-files-copy" data-type="copy">@lang('laravelfiles::plf.Copy')</button>
+            <button type="button" class="plf-files-cut" data-type="cut">@lang('laravelfiles::plf.Move')</button>
+            <button type="button" class="plf-files-put" data-action-copy="{{ route('laravel-files.groupCopy') }}" data-action-move="{{ route('laravel-files.groupMove') }}" >@lang('laravelfiles::plf.Insert')</button>
+            <button type="button" class="plf-files-remove" data-textconfirm="@lang('laravelfiles::plf.Are you sure you want to delete the selected files?')" data-action="{{ route('laravel-files.groupRemove') }}">@lang('laravelfiles::plf.Delete')</button>
+            <button type="button" class="plf-files-cancel">@lang('laravelfiles::plf.cancel')</button>
+        </div>
         <div class="plf-new-folder-pop">
             <form action="{{ route('laravel-files.newFolder') }}" class="plf-new-folder-form">
                 <input type="hidden" name="currentFolder" value="{{ $currentFolder }}" >

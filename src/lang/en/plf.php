@@ -18,5 +18,10 @@ return [
 
     "It's same name!"=>"It's same name!",
     "rename_exists"=>":newname is exists. New name - :newnameuniq",
-    "No such file or directory"=> "No such file or directory"
+    "No such file or directory"=> "No such file or directory",
+    "Delete"=>"Delete",
+    "Insert"=>"Insert",
+    "Move"=>"Move",
+    "Copy"=>"Copy",
+    "Are you sure you want to delete the selected files?"=>"Are you sure you want to delete the selected files?",
 ];

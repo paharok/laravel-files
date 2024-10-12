@@ -112,4 +112,31 @@ class LaravelFilesController extends Controller
     }
 
 
+
+    public function groupRemove(Request $request, LaravelFiles $laravelFiles)
+    {
+        if(!$request->ajax()){ abort(404); }
+
+        $result = $laravelFiles->groupRemove($request->input('items'));
+
+        return response()->json($result,200);
+    }
+
+    public function groupCopy(Request $request, LaravelFiles $laravelFiles)
+    {
+        if(!$request->ajax()){ abort(404); }
+
+        $result = $laravelFiles->groupCopy($request->input('items'),$request->input('path'));
+
+        return response()->json($result,200);
+    }
+
+    public function groupMove(Request $request, LaravelFiles $laravelFiles)
+    {
+        if(!$request->ajax()){ abort(404); }
+
+        $result = $laravelFiles->groupCopy($request->input('items'),$request->input('path'),true);
+
+        return response()->json($result,200);
+    }
 }

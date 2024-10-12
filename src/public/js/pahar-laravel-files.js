@@ -1,5 +1,5 @@
 function plfGetCookie(name) {let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));return matches ? decodeURIComponent(matches[1]) : undefined;}
-function plfSetCookie(name, value, options = {}) {options = {path: '/',...options};if (options.expires instanceof Date) { options.expires = options.expires.toUTCString();} let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value); for (let optionKey in options) {updatedCookie += "; " + optionKey;let optionValue = options[optionKey]; if (optionValue !== true) {updatedCookie += "=" + optionValue; } }document.cookie = updatedCookie;}
+function plfSetCookie(name, value, options = {}, callback = null) {options = {path: '/',...options};if (options.expires instanceof Date) { options.expires = options.expires.toUTCString();} let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value); for (let optionKey in options) {updatedCookie += "; " + optionKey;let optionValue = options[optionKey]; if (optionValue !== true) {updatedCookie += "=" + optionValue; } }document.cookie = updatedCookie;if (typeof callback === "function") {callback();} }
 
 
 
@@ -34,6 +34,8 @@ const plf = {
             },
             success: function(ans){
                 $(document).find('.plf-popup-inner').html(ans);
+                $(document).trigger('plf-checked');
+                showHidePutCancelButton();
             }
         })
     }
@@ -128,6 +130,7 @@ $(document).on('click','.plf-go-search',function (){
         success: function(ans){
             if(ans.success !== undefined){
                 $(document).find('.plf-body .plf-body-inner').html(ans.html);
+                $(document).trigger('plf-checked');
             }
         }
     })
@@ -242,6 +245,7 @@ $(document).on('click','.plf-file-item .plf-pop-remove',function(){
         success: function (ans){
             if(ans.success !== undefined){
                 outer.remove();
+                $(document).trigger('plf-checked')
             }
         }
     })
@@ -333,4 +337,149 @@ $(document).on('drop', '.plf-popup-inner', function(e) {
 });
 
 
+let plfSelectClickTimer; // Змінна для зберігання таймера
+
+$(document).on('click', '.plf-body-inner .plf-file-item', function () {
+    const $this = $(this);
+
+    clearTimeout(plfSelectClickTimer);
+
+    plfSelectClickTimer = setTimeout(function() {
+        $this.toggleClass('plf-checked');
+        $(document).trigger('plf-checked');
+    }, 200);
+});
+
+
+//selection actions
+$(document).on('plf-checked',function (){
+    if($(document).find('.plf-body-inner .plf-file-item.plf-checked').length){
+        $(document).find('.plf-group-btns .plf-files-copy,.plf-group-btns .plf-files-cut,.plf-group-btns .plf-files-remove').show();
+    }else{
+        $(document).find('.plf-group-btns .plf-files-copy,.plf-group-btns .plf-files-cut,.plf-group-btns .plf-files-remove').hide();
+    }
+})
+
+
+$(document).on('click','.plf-group-btns .plf-files-copy, .plf-group-btns .plf-files-cut',function (){
+    let $this = $(this);
+    let type = $this.attr('data-type');
+    let items = getSelectedItems();
+
+    if(type == 'copy'){
+        plfSetCookie('plfCopyItems',JSON.stringify(items));
+        plfSetCookie('plfCutItems', "", { 'max-age': -1 });
+    }else if(type == 'cut'){
+        plfSetCookie('plfCutItems',JSON.stringify(items));
+        plfSetCookie('plfCopyItems', "", { 'max-age': -1 });
+    }else{
+        return false;
+    }
+    showHidePutCancelButton();
+    $(document).find('.plf-body-inner .plf-file-item.plf-checked').removeClass('plf-checked');
+    $(document).trigger('plf-checked');
+})
+
+$(document).on('click','.plf-group-btns .plf-files-cancel',function (){
+    plfSetCookie('plfCutItems', "", { 'max-age': -1 });
+    plfSetCookie('plfCopyItems', "", { 'max-age': -1 });
+    showHidePutCancelButton();
+})
+
+$(document).on('click','.plf-files-remove:not(.loading)',function (){
+    let confirmText = $(this).attr('data-textconfirm');
+    if(!confirm(confirmText)){
+        return false;
+    }
+    let $this = $(this);
+    $this.addClass('loading');
+
+    let items = getSelectedItems();
+    if(!items){
+        return false;
+    }
+    let token = getPLFToken();
+    let url = $(this).attr('data-action');
+
+    $.ajax({
+        type:'POST',
+        url: url,
+        data: {_token:token,items:items},
+        complete: function (){
+            $this.removeClass('loading');
+        },
+        success: function(ans){
+            if(ans.success !== undefined){
+                for(i in items){
+                    $(document).find('.plf-body-inner .plf-file-item[data-path="'+ items[i] +'"]').remove();
+                }
+                $(document).trigger('plf-checked');
+            }
+        }
+    })
+})
+
+$(document).on('click','.plf-files-put:not(.loading)',function (){
+    let copyItems = plfGetCookie('plfCopyItems');
+    let cutItems = plfGetCookie('plfCutItems');
+    let $this = $(this);
+    $this.addClass('loading');
+
+    if(!copyItems && !cutItems){
+        alert('ERROR! No files!')
+        return false;
+    }
+    let token = getPLFToken();
+    let items, url;
+    if(copyItems){
+        items = JSON.parse(copyItems);
+        url = $this.attr('data-action-copy');
+    }else if(cutItems){
+        items = JSON.parse(cutItems);
+        url = $this.attr('data-action-move');
+    }
+    let path = plfGetCookie('plfLastPath');
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data:{_token:token,items:items,path:path},
+        complete: function (){
+            $this.removeClass('loading');
+        },
+        error:function (err){
+            console.log(err);
+        },
+        success:function (ans){
+            if(ans.success != undefined){
+                plfSetCookie('plfCutItems', "", { 'max-age': -1 });
+                plfSetCookie('plfCopyItems', "", { 'max-age': -1 });
+                showHidePutCancelButton();
+
+                plf.getData(path);
+            }
+        }
+    });
+});
+
+function getSelectedItems(){
+    let items = [];
+    if($(document).find('.plf-body-inner .plf-file-item.plf-checked').length){
+        $(document).find('.plf-body-inner .plf-file-item.plf-checked').each(function (){
+            items.push($(this).attr('data-path'));
+        })
+    }
+    return items;
+}
+function showHidePutCancelButton(){
+    let copyItems = plfGetCookie('plfCopyItems');
+    let cutItems = plfGetCookie('plfCutItems');
+
+    if(copyItems || cutItems){
+        $(document).find('.plf-group-btns .plf-files-cancel,.plf-group-btns .plf-files-put').show();
+    }else{
+        $(document).find('.plf-group-btns .plf-files-cancel,.plf-group-btns .plf-files-put').hide();
+    }
+
+}
 //});

@@ -18,5 +18,10 @@ return [
 
     "It's same name!"=>"Това е същото име!",
     "rename_exists"=>":newname вече съществува. Новото име е :newnameuniq",
-    "No such file or directory"=> "Не съществува такъв файл или директория"
+    "No such file or directory"=> "Не съществува такъв файл или директория",
+    "Delete"=>"Изтриване на",
+    "Insert"=>"Вмъкване на",
+    "Move"=>"Преместване",
+    "Copy"=>"Копие",
+    "Are you sure you want to delete the selected files?"=>"Сигурни ли сте, че искате да изтриете избраните файлове?",
 ];

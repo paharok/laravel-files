@@ -11,4 +11,9 @@ Route::middleware('web'/*,'auth'*/,'plf.nocache')->group(function () {
     Route::post('/laravel-files/search', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'search'])->name('laravel-files.search');
     Route::post('/laravel-files/rename', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'rename'])->name('laravel-files.rename');
 
+    Route::post('/laravel-files/group-remove', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'groupRemove'])->name('laravel-files.groupRemove');
+    Route::post('/laravel-files/group-copy', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'groupCopy'])->name('laravel-files.groupCopy');
+    Route::post('/laravel-files/group-move', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'groupMove'])->name('laravel-files.groupMove');
+
+
 });
