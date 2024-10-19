@@ -28,5 +28,10 @@
         "psr-4": {
             "Paharok\\Laravelfiles\\": "src"
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php artisan vendor:publish --tag=laravel-files-assets --force"
+        ]
     }
 }

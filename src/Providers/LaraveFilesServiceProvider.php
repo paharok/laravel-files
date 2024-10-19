@@ -34,20 +34,18 @@ class LaraveFilesServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravelfiles');
 
-        $test = Blade::component('plf-field', FileFieldComponent::class);
+        Blade::component('plf-field', FileFieldComponent::class);
 
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'laravelfiles');
 
-//        $this->publishes([
-//            __DIR__.'/../config/laravelfiles.php' => config_path('laravelfiles.php'),
-//        ]);
-//        $this->mergeConfigFrom(
-//            __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
-//        );
-
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/laravel-files'),
-        ], 'laravel-assets');
+            __DIR__.'/../config/laravelfiles.php' => config_path('laravelfiles.php'),
+        ], 'laravel-files-assets');
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
+       );
 
     }
 }
