@@ -308,6 +308,27 @@
 .plf-file-item-file .plf-file-img{
     background-color: #f3f3f3;
 }
+.plf-field-delete:hover{
+    opacity: 1;
+}
+.plf-field-delete{
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 50%;
+    border: none;
+    background: red;
+    color: #fff;
+    line-height: 1;
+    padding: 0;
+    font-size: 20px;
+    width: 26px;
+    height: 26px;
+    opacity: 0.2;
+    transition-duration: 0.2s;
+}
 .plf-pop-remove,.plf-field-remove{
     position: absolute;
     right: 5px;
@@ -457,4 +478,30 @@
 .plf-group-btns{
     padding: 0 5px;
     display: flex;
+}
+.plf-fields-multiple-outer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+.plf-fields-multiple-adding:hover{
+    font-size: 50px;
+}
+.plf-fields-multiple-adding-outer{
+    padding: 5px;
+}
+.plf-fields-multiple-adding{
+    width: 110px;
+    height: 110px;
+    border: 2px dashed #8fbd56;
+    color: #8fbd56;
+    font-size: 30px;
+    font-weight: 100;
+    line-height: 1;
+    background: #fff;
+    transition-duration: 0.1s;
+    cursor: pointer;
+}
+.plf-fields-multiple-placeholder{
+    display: none!important;
 }

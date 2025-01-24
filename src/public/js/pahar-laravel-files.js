@@ -482,4 +482,15 @@ function showHidePutCancelButton(){
     }
 
 }
+
+
+$(document).on('click','.plf-fields-multiple-adding-outer',function(){
+    let outer = $(this).closest('.plf-fields-multiple-outer');
+    outer.find('.plf-fields-multiple-placeholder .plf-field-outer').clone().insertBefore(outer.find('.plf-fields-multiple-adding-outer'));
+})
+
+$(document).on('click','.plf-field-delete',function(){
+    $(this).closest('.plf-field-outer').remove();
+});
+
 //});

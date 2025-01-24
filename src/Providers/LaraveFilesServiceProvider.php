@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\Blade;
 use Paharok\Laravelfiles\View\Components\FileFieldComponent;
+use Paharok\Laravelfiles\View\Components\FileFieldMultipleComponent;
 use Illuminate\Routing\Router;
 
 class LaraveFilesServiceProvider extends ServiceProvider
@@ -35,6 +36,8 @@ class LaraveFilesServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravelfiles');
 
         Blade::component('plf-field', FileFieldComponent::class);
+
+        Blade::component('plf-field-multiple', FileFieldMultipleComponent::class);
 
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'laravelfiles');
 

@@ -17,4 +17,7 @@
 #### Вивести поле для вибору файлу
     <x-plf-field :name="$name" :value="$value"/>
 
+#### Вивести поля для вибору файлів
+    <x-plf-field-multiple :name="name[]" :values="array $value"/>
+
 ### Підтримка CKEditor 4
