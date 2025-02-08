@@ -11,7 +11,7 @@
                     @endif
                 </div>
                 <div class="plf-field-name">{{ $fileName ?? '' }}</div>
-                <input type="hidden" name="{{ $name }}" value="">
+                <input type="hidden" name="{{ $name }}" value="{{ $value['value'] ?? '' }}">
             </div>
         @endforeach
     @else
