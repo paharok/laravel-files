@@ -38,8 +38,10 @@ class LaravelFiles
 
     public function searchFiles($currentFolder,$s){
         $files = $this->getFilesFromDir($currentFolder);
+        $searchTerm = str_ireplace([' ', '-', '_','"', "'"], '', $s);
         foreach ($files as $key=>$file){
-            if(in_array($file,$this->exclude) || !stristr($file,$s)){
+            $normalizedFile = str_ireplace([' ', '-', '_', '"', "'"], '', $file);
+            if(in_array($file,$this->exclude) || !stristr($normalizedFile, $searchTerm)){
                 unset($files[$key]);
             }
         }
