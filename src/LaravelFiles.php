@@ -36,6 +36,7 @@ class LaravelFiles
         return $this->pathToFiles;
     }
 
+
     public function searchFiles($currentFolder,$s){
         $files = $this->getFilesFromDir($currentFolder);
         $searchTerm = str_ireplace([' ', '-', '_','"', "'"], '', $s);
