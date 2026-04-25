@@ -273,7 +273,7 @@ $(document).on('dblclick','.plf-file-item-file',function(){
         plf.target.find('.plf-field-body img').attr('src',thumb);
         plf.target.find('.plf-field-name').text(name);
         plf.target.find('input[type="hidden"]').val(publicPath);
-        plf.target.find('input[type="hidden"]').trigger('change');
+        //plf.target.find('input[type="hidden"]').trigger('change');
 
         if($(this).find('.plf-file-extension').length){
             plf.target.find('.plf-field-body .plf-field-body-extension').remove();
@@ -291,7 +291,7 @@ $(document).on('click','.plf-field-remove',function(){
     outer.find('.plf-field-body img').attr('src',placeholder);
     outer.find('.plf-field-name').text('');
     outer.find('input[type="hidden"]').val('');
-    outer.find('input[type="hidden"]').trigger('change');
+    //outer.find('input[type="hidden"]').trigger('change');
     outer.find('.plf-field-body-extension').remove();
 });
 
