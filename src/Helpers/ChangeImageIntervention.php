@@ -3,10 +3,38 @@ namespace Paharok\Laravelfiles\Helpers;
 
 use Paharok\Laravelfiles\Helpers\Contracts\ChangeImage;
 
-use Intervention\Image\Facades\Image AS Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\Encoders\PngEncoder;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Encoders\GifEncoder;
+use Intervention\Image\Encoders\BmpEncoder;
 
 class ChangeImageIntervention implements ChangeImage{
     public static $mimes = ['image/jpg','image/jpeg','image/png','image/webp','image/bmp','image/gif'];
+
+    private static function manager(){
+        static $manager;
+        if(!$manager){
+            $manager = ImageManager::gd();
+        }
+        return $manager;
+    }
+
+    private static function encoderForExtension($extension, $quality = 100){
+        switch(strtolower($extension)){
+            case 'png':
+                return new PngEncoder();
+            case 'webp':
+                return new WebpEncoder($quality);
+            case 'gif':
+                return new GifEncoder();
+            case 'bmp':
+                return new BmpEncoder();
+            default:
+                return new JpegEncoder($quality);
+        }
+    }
 
     public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center'){
 
@@ -65,53 +93,33 @@ class ChangeImageIntervention implements ChangeImage{
 
 
 
-            $image = Image::make(public_path() . $filePath);
-
-
-            if(in_array($image->exif('Orientation'),[3,4])){
-                $image->rotate(180);
-            }elseif(in_array($image->exif('Orientation'),[5,6])){
-                $image->rotate(-90);
-            }elseif(in_array($image->exif('Orientation'),[7,8])){
-                $image->rotate(90);
-            }
-            if (in_array($image->exif('Orientation'), [2, 5, 7, 4])) {
-                $image->flip('h');
-            }
-
-
+            // v3's read() auto-corrects EXIF orientation during decoding.
+            $image = self::manager()->read(public_path() . $filePath);
 
             if(!file_exists(public_path() . $cache_dir)){
                 mkdir(public_path() . $cache_dir,0775,true);
             }
 
             if($crop=='fit'){
-
-                $image->fit($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                },$position);
+                // v3 renamed fit() to cover() (crop-to-fill, preserving aspect ratio)
+                $image->cover($width, $height, $position);
             }elseif($crop=='resize'){
-                $image->resize($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                // scaleDown() preserves aspect ratio and never upsizes, matching the
+                // old resize()+aspectRatio()+upsize() combo.
+                $image->scaleDown($width, $height);
             }elseif($crop=='resizebg'){
-                $canvas = Image::canvas($width, $height, '#ffffff');
+                $canvas = self::manager()->create($width, $height)->fill('ffffff');
 
-                $image->resize($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                $image->scaleDown($width, $height);
 
-                $image = $canvas->insert($image,'center');
-
+                $canvas->place($image, 'center');
+                $image = $canvas;
             }
 
-
-
-            $image->save(public_path() . $cache_dir . $newFileName,100);
-            $image->save(public_path() . $cache_dir . $newFileNameWebp,100);
+            $image->encode(self::encoderForExtension($path_parts['extension']))
+                ->save(public_path() . $cache_dir . $newFileName);
+            $image->encode(self::encoderForExtension('webp'))
+                ->save(public_path() . $cache_dir . $newFileNameWebp);
         }
 
         $cache_dir = str_replace(' ','%20',$cache_dir);
