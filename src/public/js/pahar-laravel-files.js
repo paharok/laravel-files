@@ -43,6 +43,13 @@ const plf = {
 
 
 
+// Safety net: these forms are only ever submitted through $.ajax() from a
+// button click, never natively. Blocks the implicit Enter-key submission too.
+$(document).on('submit','.plf-new-folder-form, .plf-search-form',function(e){
+    e.preventDefault();
+    return false;
+});
+
 $(document).on('click','.plf-field-body',function(e){
     plf.target = $(e.target).closest('.plf-field-outer');
     let lastPath = plfGetCookie('plfLastPath');

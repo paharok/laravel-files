@@ -146,6 +146,15 @@ const plf = {
 };
 
 
+// Safety net: these forms are only ever submitted through fetch() from a
+// button click. Browsers can implicitly submit a form on Enter in a lone
+// text input even when preventDefault() was called on the keypress event,
+// so also block the actual 'submit' event as a last resort.
+plfOn('submit', '.plf-new-folder-form, .plf-search-form', function (e) {
+    e.preventDefault();
+    return false;
+});
+
 plfOn('click', '.plf-field-body', function (e) {
     plf.target = e.target.closest('.plf-field-outer');
     let lastPath = plfGetCookie('plfLastPath');
@@ -197,6 +206,7 @@ plfOn('click', '.plf-newFolder', function () {
 
 plfOn('keypress', '.plf-new-folder-form input[name="foldername"]', function (e) {
     if (e.which == 13) {
+        e.preventDefault();
         let btn = this.closest('form').querySelector('.plf-newFolder');
         if (btn) {
             btn.dispatchEvent(new Event('click', {bubbles: true}));
@@ -253,6 +263,7 @@ plfOn('click', '.plf-go-search', function () {
 });
 plfOn('keypress', '.plf-search-form input[name="s"]', function (e) {
     if (e.which == 13) {
+        e.preventDefault();
         let btn = this.closest('form').querySelector('.plf-go-search');
         if (btn) {
             btn.dispatchEvent(new Event('click', {bubbles: true}));
