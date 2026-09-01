@@ -13,6 +13,7 @@ return [
 
     "errorEmptyField"=>"Empty field",
     "errorSomethingWrong"=>"Something went wrong!",
+    "errorInvalidPath"=>"Invalid path",
     "questRenameFile"=>"Rename file",
     "questRenameDir"=>"Rename directory",
 

@@ -2,11 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(array_filter([
-    'web',
-    'plf.nocache',
-    config('laravelfiles.auth_middleware') ? 'auth' : null,
-]))->group(function () {
+$plfAuthMiddleware = config('laravelfiles.auth_middleware', true);
+if ($plfAuthMiddleware === true) {
+    $plfAuthMiddleware = 'auth';
+}
+
+Route::middleware(array_values(array_filter(array_merge(
+    ['web', 'plf.nocache'],
+    $plfAuthMiddleware ? (array) $plfAuthMiddleware : [],
+    ['plf.access']
+))))->group(function () {
     Route::get('/laravel-files', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'index'])->name('laravel-files.index');
     Route::post('/laravel-files/new-folder', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'newFolder'])->name('laravel-files.newFolder');
     Route::post('/laravel-files/new-file', [\Paharok\Laravelfiles\Http\Controllers\LaravelFilesController::class,'newFile'])->name('laravel-files.newFile');

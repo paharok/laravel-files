@@ -13,6 +13,7 @@ return [
 
     "errorEmptyField"=>"Празно поле",
     "errorSomethingWrong"=>"Нещо се обърка!",
+    "errorInvalidPath"=>"Невалиден път",
     "questRenameFile"=>"Преименуване на файл",
     "questRenameDir"=>"Преименуване на директория",
 

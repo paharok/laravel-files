@@ -36,6 +36,88 @@ class LaravelFiles
         return $this->pathToFiles;
     }
 
+    /**
+     * Checks the filename against config('laravelfiles.forbidden_extensions').
+     * Every dot-separated segment after the base name is checked (case-insensitively),
+     * so "shell.php.jpg" is rejected because of the "php" segment, not just the last one.
+     */
+    public function isUploadAllowed($filename){
+        $parts = explode('.', (string) $filename);
+        array_shift($parts);
+
+        $forbidden = array_map('strtolower', config('laravelfiles.forbidden_extensions', []));
+
+        foreach ($parts as $part){
+            if(in_array(strtolower($part), $forbidden, true)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Turn a client-supplied relative path into a safe absolute path
+     * that is guaranteed to stay inside pathToFiles, or return null if
+     * it tries to escape it (contains unresolvable ".." segments, or,
+     * for already-existing targets, resolves outside via a symlink).
+     */
+    public function resolveSafePath($relativePath){
+        $relativePath = (string) $relativePath;
+        $relativePath = str_replace('\\', '/', $relativePath);
+        $relativePath = str_replace("\0", '', $relativePath);
+
+        $segments = explode('/', $relativePath);
+        $stack = [];
+        foreach ($segments as $segment){
+            if($segment === '' || $segment === '.'){
+                continue;
+            }
+            if($segment === '..'){
+                if(empty($stack)){
+                    return null;
+                }
+                array_pop($stack);
+                continue;
+            }
+            $stack[] = $segment;
+        }
+
+        $safeRelative = implode('/', $stack);
+        $fullPath = $this->pathToFiles . ($safeRelative !== '' ? '/' . $safeRelative : '');
+
+        if(file_exists($fullPath)){
+            $realFullPath = realpath($fullPath);
+            $realRoot = realpath($this->pathToFiles);
+            if($realFullPath === false || $realRoot === false){
+                return null;
+            }
+            if($realFullPath !== $realRoot && strpos($realFullPath, $realRoot . DIRECTORY_SEPARATOR) !== 0){
+                return null;
+            }
+        }
+
+        return $fullPath;
+    }
+
+    /**
+     * Same as resolveSafePath() but returns null for the whole batch if any
+     * item is invalid, otherwise an array of resolved absolute paths.
+     */
+    public function resolveSafePaths($relativePaths){
+        if(!is_array($relativePaths)){
+            return null;
+        }
+        $resolved = [];
+        foreach ($relativePaths as $relativePath){
+            $safePath = $this->resolveSafePath($relativePath);
+            if($safePath === null){
+                return null;
+            }
+            $resolved[] = $safePath;
+        }
+        return $resolved;
+    }
+
 
     public function searchFiles($currentFolder,$s){
         $files = $this->getFilesFromDir($currentFolder);

@@ -30,6 +30,7 @@ class LaraveFilesServiceProvider extends ServiceProvider
     {
         //
         $router->aliasMiddleware('plf.nocache', \Paharok\Laravelfiles\Http\Middleware\NoCache::class);
+        $router->aliasMiddleware('plf.access', \Paharok\Laravelfiles\Http\Middleware\CheckUserAccess::class);
 
         $this->loadRoutesFrom(__DIR__.'/../routes/laravelfiles.php');
 

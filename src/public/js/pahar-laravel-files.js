@@ -180,6 +180,9 @@ $(document).on('change','.plf-files-form input',function(){
         contentType: false,
         processData: false,
         success: function (ans){
+            if(ans && ans.rejected && ans.rejected.length){
+                alert('Не завантажено (заборонений тип файлу): ' + ans.rejected.join(', '));
+            }
             let lastPath = plfGetCookie('plfLastPath');
             if(!lastPath){
                 lastPath = '';
@@ -191,7 +194,12 @@ $(document).on('change','.plf-files-form input',function(){
 
 $(document).on('click','.plf-file-item .plf-pop-rename',function(){
     let promptQuestion = $(this).attr('data-prompt');
-    let newName = prompt(promptQuestion, name);
+    let item = $(this).closest('.plf-file-item');
+    let currentName = item.find('.plf-filename').text();
+    if(item.hasClass('plf-file-item-file')){
+        currentName = currentName.replace(/\.[^.]+$/, '');
+    }
+    let newName = prompt(promptQuestion, currentName);
 
     if(!newName){
         return false;
@@ -252,11 +260,16 @@ $(document).on('click','.plf-file-item .plf-pop-remove',function(){
 });
 
 $(document).on('dblclick','.plf-file-item-file',function(){
+    if(!plf.target){
+        plf.close();
+        return;
+    }
     let publicPath = $(this).attr('data-publicPath');
     let name = $(this).find('.plf-filename').text();
     let thumb = $(this).find('.plf-file-img img').attr('src');
 
     if(plf.target.container !== undefined){
+        //CKEditor 4
         let imagesArr = ['jpg','jpeg','png','webp','svg'];
         let re = /(?:\.([^.]+))?$/;
         let ext = re.exec(publicPath)[1];
@@ -267,6 +280,26 @@ $(document).on('dblclick','.plf-file-item-file',function(){
             let filename = publicPath.replace(/^.*[\\\/]/, '');
             let downloadLink = "<a href='/"+ publicPath +"' download='"+ filename +"'>"+ filename +"</a>";
             plf.target.insertHtml(downloadLink);
+        }
+
+    }else if(plf.target.root !== undefined && plf.target.root.classList && plf.target.root.classList.contains('ql-editor')){
+        //Quill (ql-editor)
+        let imagesArr = ['jpg','jpeg','png','webp','svg'];
+        let re = /(?:\.([^.]+))?$/;
+        let ext = re.exec(publicPath)[1];
+        let range = plf.target.getSelection(true);
+        let index = range ? range.index : plf.target.getLength();
+
+        if(imagesArr.includes(ext.toLowerCase())){
+            plf.target.insertEmbed(index, 'image', '/'+ publicPath, 'user');
+            plf.target.setSelection(index + 1, 0, 'user');
+        }else{
+            let filename = publicPath.replace(/^.*[\\\/]/, '');
+            let downloadLink = "<a href='/"+ publicPath +"' download='"+ filename +"'>"+ filename +"</a>";
+            let lengthBefore = plf.target.getLength();
+            plf.target.clipboard.dangerouslyPasteHTML(index, downloadLink, 'user');
+            let insertedLength = plf.target.getLength() - lengthBefore;
+            plf.target.setSelection(index + insertedLength, 0, 'user');
         }
 
     }else{

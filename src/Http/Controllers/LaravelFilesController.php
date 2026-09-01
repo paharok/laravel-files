@@ -9,8 +9,12 @@ class LaravelFilesController extends Controller
 {
 
     public function index(LaravelFiles $laravelFiles, Request $request){
+         if(!$request->ajax()){ abort(404); }
 
-         $path = $laravelFiles->getPathToFiles() . $request->input('path');
+         $path = $laravelFiles->resolveSafePath($request->input('path'));
+         if($path === null || !is_dir($path)){
+             abort(404);
+         }
 
          $files = $laravelFiles->getFilesFromDir($path);
          $data['files'] = $laravelFiles->formatedFiles($files,$path);
@@ -24,11 +28,16 @@ class LaravelFilesController extends Controller
     }
 
     public function newFolder(LaravelFiles $laravelFiles, Request $request){
+        if(!$request->ajax()){ abort(404); }
+
         if(!$request->input('foldername')){
             return response()->json(['error'=>trans('laravelfiles::plf.errorEmptyField')],200);
         }
 
-        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('currentFolder');
+        $currentFolder = $laravelFiles->resolveSafePath($request->input('currentFolder'));
+        if($currentFolder === null || !is_dir($currentFolder)){
+            return response()->json(['error'=>trans('laravelfiles::plf.errorInvalidPath')],422);
+        }
 
         $folderName = $laravelFiles->setName($request->input('foldername'),$currentFolder,false);
 
@@ -39,30 +48,48 @@ class LaravelFilesController extends Controller
 
 
     public function newFile(LaravelFiles $laravelFiles, Request $request){
-        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('folder');
-        for($i=0;$request->hasFile('file-'.$i);$i++){
-            $file = $request->file('file-'.$i);
-            if($file->isValid()){
+        if(!$request->ajax()){ abort(404); }
 
-                $fileName = $laravelFiles->setName($file->getClientOriginalName(),$currentFolder);
-                $file->move($currentFolder,$fileName);
-                $laravelFiles->makeThumbnails($currentFolder,$fileName);
-            }
+        $currentFolder = $laravelFiles->resolveSafePath($request->input('folder'));
+        if($currentFolder === null || !is_dir($currentFolder)){
+            return response()->json(['error'=>trans('laravelfiles::plf.errorInvalidPath')],422);
         }
 
-        return response()->json($request->all(),200);
+        $rejected = [];
+        for($i=0;$request->hasFile('file-'.$i);$i++){
+            $file = $request->file('file-'.$i);
+            if(!$file->isValid()){
+                continue;
+            }
+
+            if(!$laravelFiles->isUploadAllowed($file->getClientOriginalName())){
+                $rejected[] = $file->getClientOriginalName();
+                continue;
+            }
+
+            $fileName = $laravelFiles->setName($file->getClientOriginalName(),$currentFolder);
+            $file->move($currentFolder,$fileName);
+            $laravelFiles->makeThumbnails($currentFolder,$fileName);
+        }
+
+        return response()->json(['success'=>'ok','rejected'=>$rejected],200);
     }
 
 
     public function removeFile(LaravelFiles $laravelFiles, Request $request){
-        $filePath = $request->input('path');
+        if(!$request->ajax()){ abort(404); }
+
+        $filePath = $laravelFiles->resolveSafePath($request->input('path'));
+        if($filePath === null){
+            return response()->json(['errors'=>['path'=>trans('laravelfiles::plf.errorInvalidPath')]],422);
+        }
         $pathInfo = pathinfo($filePath);
 
-        if(file_exists($laravelFiles->getPathToFiles() . $filePath)){
-            unlink($laravelFiles->getPathToFiles() . $filePath);
+        if(file_exists($filePath)){
+            unlink($filePath);
         }
 
-        $thumbsDir = $laravelFiles->getPathToFiles() . $pathInfo['dirname'] . '/__thumbnails__';
+        $thumbsDir = $pathInfo['dirname'] . '/__thumbnails__';
         if(is_dir($thumbsDir)){
             $laravelFiles->removeThumbnails($thumbsDir,$pathInfo['filename']);
         }
@@ -71,18 +98,25 @@ class LaravelFilesController extends Controller
     }
 
     public function removeDir(LaravelFiles $laravelFiles, Request $request){
-        $dirPath = $request->input('path');
-        if(is_dir($laravelFiles->getPathToFiles() . $dirPath) &&  $laravelFiles->deleteDirectory($laravelFiles->getPathToFiles() . $dirPath)){
+        if(!$request->ajax()){ abort(404); }
+
+        $dirPath = $laravelFiles->resolveSafePath($request->input('path'));
+        if($dirPath === null){
+            return response()->json(['errors'=>['path'=>trans('laravelfiles::plf.errorInvalidPath')]],422);
+        }
+        if(is_dir($dirPath) &&  $laravelFiles->deleteDirectory($dirPath)){
             return response()->json(['success'=>'ok'],200);
         }
         return response()->json(['errors'=>['err1'=>trans('laravelfiles::plf.errorSomethingWrong')]],200);
     }
 
     public function search(LaravelFiles $laravelFiles, Request $request){
-        $currentFolder = $laravelFiles->getPathToFiles() . $request->input('currentFolder');
+        if(!$request->ajax()){ abort(404); }
+
+        $currentFolder = $laravelFiles->resolveSafePath($request->input('currentFolder'));
         $s = $request->input('s');
 
-        if(!$s){
+        if(!$s || $currentFolder === null || !is_dir($currentFolder)){
             return response()->json(['errors'=>['err'=>'err']],200);
         }
 
@@ -103,6 +137,10 @@ class LaravelFilesController extends Controller
         $path = $request->input('path');
         $newName = $request->input('newName');
 
+        if($laravelFiles->resolveSafePath($path) === null){
+            return response()->json(['errors'=>['path'=>trans('laravelfiles::plf.errorInvalidPath')]],422,[],JSON_UNESCAPED_UNICODE);
+        }
+
         $result = $laravelFiles->renameItem($path,$newName);
 
         if(!empty($result['errors'])){
@@ -117,7 +155,12 @@ class LaravelFilesController extends Controller
     {
         if(!$request->ajax()){ abort(404); }
 
-        $result = $laravelFiles->groupRemove($request->input('items'));
+        $items = $request->input('items');
+        if($laravelFiles->resolveSafePaths($items) === null){
+            return response()->json(['errors'=>['items'=>trans('laravelfiles::plf.errorInvalidPath')]],422);
+        }
+
+        $result = $laravelFiles->groupRemove($items);
 
         return response()->json($result,200);
     }
@@ -126,7 +169,13 @@ class LaravelFilesController extends Controller
     {
         if(!$request->ajax()){ abort(404); }
 
-        $result = $laravelFiles->groupCopy($request->input('items'),$request->input('path'));
+        $items = $request->input('items');
+        $path = $request->input('path');
+        if($laravelFiles->resolveSafePaths($items) === null || $laravelFiles->resolveSafePath($path) === null){
+            return response()->json(['errors'=>['items'=>trans('laravelfiles::plf.errorInvalidPath')]],422);
+        }
+
+        $result = $laravelFiles->groupCopy($items,$path);
 
         return response()->json($result,200);
     }
@@ -135,7 +184,13 @@ class LaravelFilesController extends Controller
     {
         if(!$request->ajax()){ abort(404); }
 
-        $result = $laravelFiles->groupCopy($request->input('items'),$request->input('path'),true);
+        $items = $request->input('items');
+        $path = $request->input('path');
+        if($laravelFiles->resolveSafePaths($items) === null || $laravelFiles->resolveSafePath($path) === null){
+            return response()->json(['errors'=>['items'=>trans('laravelfiles::plf.errorInvalidPath')]],422);
+        }
+
+        $result = $laravelFiles->groupCopy($items,$path,true);
 
         return response()->json($result,200);
     }
