@@ -285,12 +285,10 @@ plfOn('click', '.plf-path li.plf-path-li', function () {
 
 
 plfOn('click', '.plf-files-form button', function () {
-    let parent = this.parentElement;
-    let sibling = parent ? Array.prototype.find.call(parent.children, function (child) {
-        return child !== this && child.matches('input');
-    }, this) : null;
-    if (sibling) {
-        sibling.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    let form = this.closest('.plf-files-form');
+    let fileInput = form ? form.querySelector('input[type="file"]') : null;
+    if (fileInput) {
+        fileInput.dispatchEvent(new MouseEvent('click', {bubbles: true}));
     }
 });
 plfOn('change', '.plf-files-form input', function () {
