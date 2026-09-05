@@ -183,7 +183,7 @@ class LaravelFiles
                     'minPath' =>  $prePath . '/' .  $file,
                     'publicPath' =>  $this->filesFolder . $prePath .'/'. $file,
                     'type' => is_dir($dir . '/' . $file)?'dir':'file',
-                    'url' => env('APP_URL') . '/' . $this->filesFolder . $prePath .'/'. $file,
+                    'url' => asset($this->filesFolder . $prePath . '/' . $file),
                     'needExtension'=>false,
                 ];
                 if($filesList[$key]['type'] == 'file'){
@@ -219,11 +219,17 @@ class LaravelFiles
         $thumbnailName = $fileInfo['filename'] . '100_100fit.' . $fileInfo['extension'];
         $prePath = str_replace($this->pathToFiles,'',$fileInfo['dirname']);
         if(in_array(strtolower($fileInfo['extension']),$this->imagesOrigin)){
-            return env('APP_URL') . '/' . $this->filesFolder .  $prePath . '/' . $fileInfo['basename'];
-        }else if(file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName)){
-            return env('APP_URL') . '/' . $this->filesFolder .  $prePath . '/__thumbnails__/'.$thumbnailName;
+            return asset($this->filesFolder . $prePath . '/' . $fileInfo['basename']);
+        }
+
+        if(!file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName) && in_array(strtolower($fileInfo['extension']),$this->imagesResize)){
+            $this->makeThumbnails($fileInfo['dirname'], $fileInfo['basename']);
+        }
+
+        if(file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName)){
+            return asset($this->filesFolder . $prePath . '/__thumbnails__/'.$thumbnailName);
         }else{
-            return env('APP_URL') . '/' . $this->filesFolder .  '/' . $this->fileIco;
+            return asset($this->filesFolder . '/' . $this->fileIco);
         }
     }
 

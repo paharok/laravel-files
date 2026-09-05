@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Paharok\Laravelfiles\View\Components\FileFieldComponent;
 use Paharok\Laravelfiles\View\Components\FileFieldMultipleComponent;
 use Illuminate\Routing\Router;
+use Paharok\Laravelfiles\Console\Commands\ClearThumbnailsCommand;
 
 class LaraveFilesServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,12 @@ class LaraveFilesServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/laravelfiles.php', 'laravelfiles'
        );
+
+        if($this->app->runningInConsole()){
+            $this->commands([
+                ClearThumbnailsCommand::class,
+            ]);
+        }
 
     }
 }
