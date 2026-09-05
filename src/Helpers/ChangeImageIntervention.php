@@ -36,7 +36,7 @@ class ChangeImageIntervention implements ChangeImage{
         }
     }
 
-    public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center'){
+    public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center',$quality=100){
 
         if(mb_substr($filePath,0,1) != '/'){
             $filePath = '/' . $filePath;
@@ -116,9 +116,9 @@ class ChangeImageIntervention implements ChangeImage{
                 $image = $canvas;
             }
 
-            $image->encode(self::encoderForExtension($path_parts['extension']))
+            $image->encode(self::encoderForExtension($path_parts['extension'],$quality))
                 ->save(public_path() . $cache_dir . $newFileName);
-            $image->encode(self::encoderForExtension('webp'))
+            $image->encode(self::encoderForExtension('webp',$quality))
                 ->save(public_path() . $cache_dir . $newFileNameWebp);
         }
 
