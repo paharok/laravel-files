@@ -3,37 +3,19 @@ namespace Paharok\Laravelfiles\Helpers;
 
 use Paharok\Laravelfiles\Helpers\Contracts\ChangeImage;
 
-use Intervention\Image\ImageManager;
-use Intervention\Image\Encoders\JpegEncoder;
-use Intervention\Image\Encoders\PngEncoder;
-use Intervention\Image\Encoders\WebpEncoder;
-use Intervention\Image\Encoders\GifEncoder;
-use Intervention\Image\Encoders\BmpEncoder;
+use Paharok\Laravelfiles\Helpers\Intervention\AdapterFactory;
+use Paharok\Laravelfiles\Helpers\Intervention\ImageAdapter;
 
 class ChangeImageIntervention implements ChangeImage{
     public static $mimes = ['image/jpg','image/jpeg','image/png','image/webp','image/bmp','image/gif'];
 
-    private static function manager(){
-        static $manager;
-        if(!$manager){
-            $manager = ImageManager::gd();
+    /** Works with Intervention Image v3 and v4 (see Helpers/Intervention). */
+    private static function adapter(): ImageAdapter{
+        static $adapter;
+        if(!$adapter){
+            $adapter = AdapterFactory::make();
         }
-        return $manager;
-    }
-
-    private static function encoderForExtension($extension, $quality = 100){
-        switch(strtolower($extension)){
-            case 'png':
-                return new PngEncoder();
-            case 'webp':
-                return new WebpEncoder($quality);
-            case 'gif':
-                return new GifEncoder();
-            case 'bmp':
-                return new BmpEncoder();
-            default:
-                return new JpegEncoder($quality);
-        }
+        return $adapter;
     }
 
     public static function changeImage($filePath,$width=0,$height=0,$crop='fit',$position='center',$quality=100){
@@ -93,33 +75,32 @@ class ChangeImageIntervention implements ChangeImage{
 
 
 
-            // v3's read() auto-corrects EXIF orientation during decoding.
-            $image = self::manager()->read(public_path() . $filePath);
+            $adapter = self::adapter();
+            $w = (int) $width;
+            $h = (int) $height;
+            $quality = (int) $quality;
+
+            // read() auto-corrects EXIF orientation during decoding (v3 and v4).
+            $image = $adapter->read(public_path() . $filePath);
 
             if(!file_exists(public_path() . $cache_dir)){
                 mkdir(public_path() . $cache_dir,0775,true);
             }
 
             if($crop=='fit'){
-                // v3 renamed fit() to cover() (crop-to-fill, preserving aspect ratio)
-                $image->cover($width, $height, $position);
+                // crop-to-fill, preserving aspect ratio
+                $image = $adapter->cover($image, $w, $h, $position);
             }elseif($crop=='resize'){
-                // scaleDown() preserves aspect ratio and never upsizes, matching the
-                // old resize()+aspectRatio()+upsize() combo.
-                $image->scaleDown($width, $height);
+                // preserves aspect ratio and never upsizes
+                $image = $adapter->scaleDown($image, $w, $h);
             }elseif($crop=='resizebg'){
-                $canvas = self::manager()->create($width, $height)->fill('ffffff');
-
-                $image->scaleDown($width, $height);
-
-                $canvas->place($image, 'center');
-                $image = $canvas;
+                $canvas = $adapter->canvas($w, $h, '#ffffff');
+                $image = $adapter->scaleDown($image, $w, $h);
+                $image = $adapter->place($canvas, $image, 'center');
             }
 
-            $image->encode(self::encoderForExtension($path_parts['extension'],$quality))
-                ->save(public_path() . $cache_dir . $newFileName);
-            $image->encode(self::encoderForExtension('webp',$quality))
-                ->save(public_path() . $cache_dir . $newFileNameWebp);
+            $adapter->save($image, public_path() . $cache_dir . $newFileName, $path_parts['extension'], $quality);
+            $adapter->save($image, public_path() . $cache_dir . $newFileNameWebp, 'webp', $quality);
         }
 
         $cache_dir = str_replace(' ','%20',$cache_dir);

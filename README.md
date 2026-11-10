@@ -5,6 +5,26 @@
 
 ### Публікація
     php artisan vendor:publish --tag=laravel-files-assets --force
+
+### Вимоги
+- PHP 8.1+
+- [Intervention Image](https://image.intervention.io/) 3.x або 4.x (для 4.x потрібен PHP 8.3+). Composer сам підбере версію під ваш PHP; пакет працює з обома.
+
+## Оновлення з 2.x на 3.0
+Версія 3.0 містить зміни, що ламають сумісність:
+
+- **Intervention Image 2.x → 3.x / 4.x.** Пакет більше не працює з Intervention 2.x, тому `composer update` підніме Intervention у вашому застосунку. Якщо ваш власний код використовує API 2.x (`Image::make()`, `->fit()`, `->resize()` тощо) — перепишіть його під [v3](https://image.intervention.io/v3) або [v4](https://image.intervention.io/v4).
+- **Фасад `Intervention\Image\Facades\Image` більше не існує.** Якщо в `config/app.php` є рядок `'Image' => Intervention\Image\Facades\Image::class` — видаліть його, інакше Laravel впаде з «Class not found». Пакету цей аліас не потрібен.
+- **PHP 8.1+** (раніше 8.0).
+- **Заборонені розширення.** Файли з серверними/виконуваними розширеннями (`php`, `exe`, `sh`, `htaccess` …) більше не завантажуються — див. [Заборонені розширення файлів](#заборонені-розширення-файлів).
+- **Роути файлменеджера приймають лише AJAX-запити** (не-AJAX → 404). Відповідь на завантаження тепер `{"success":"ok","rejected":[...]}` замість ехо запиту — важливо, лише якщо у вас свій JS поверх API пакета.
+
+Після оновлення перепублікуйте ассети, очистіть кеш компонентів і (рекомендовано) мініатюри:
+
+    php artisan vendor:publish --tag=laravel-files-assets --force
+    php artisan view:clear
+    php artisan laravel-files:clear-thumbnails
+
 ## Оновлення
 ### Очищення кешу компонентів
     php artisan view:clear
