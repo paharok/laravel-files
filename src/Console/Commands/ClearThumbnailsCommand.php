@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\File;
 
 class ClearThumbnailsCommand extends Command
 {
-    protected $signature = 'laravel-files:clear-thumbnails {path? : Шлях відносно public/ для пошуку папок мініатюр (за замовчуванням vendor/laravel-files/files)}';
+    protected $signature = 'laravel-files:clear-thumbnails {path? : Шлях відносно public/ для пошуку папок мініатюр (за замовчуванням config laravelfiles.root_path)}';
 
     protected $description = 'Рекурсивно шукає папки __thumbnails__ у вказаному шляху (відносно public/) та видаляє їх разом із вмістом';
 
     public function handle()
     {
-        $path = $this->argument('path') ?: 'vendor/laravel-files/files';
+        $path = $this->argument('path') ?: config('laravelfiles.root_path', 'vendor/laravel-files/files');
 
         if($this->hasParentTraversal($path)){
             $this->error('Шлях не може містити "..". Дозволені лише шляхи всередині public/.');

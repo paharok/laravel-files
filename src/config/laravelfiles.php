@@ -1,5 +1,12 @@
 <?php
 return [
+    // Корінь сховища файлів відносно public/ (без початкового слеша).
+    // За замовчуванням 'vendor/laravel-files/files'. Приклад для WordPress-міграції:
+    //     'root_path' => 'wp-content/uploads',
+    // Службові ассети пакета (no-img.png, іконка файлу) завжди лишаються в
+    // public/vendor/laravel-files/files незалежно від цього параметра.
+    'root_path' => 'vendor/laravel-files/files',
+
     // Middleware, яке навішується на всі роути файлменеджера.
     // - true               — стандартне Laravel 'auth' (будь-який залогінений користувач)
     // - false              — без обмежень (не рекомендовано)

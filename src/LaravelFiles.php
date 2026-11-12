@@ -26,9 +26,15 @@ class LaravelFiles
 
     private $pathToFiles;
 
-    private $filesFolder = 'vendor/laravel-files/files';
+    // Корінь сховища файлів (відносно public/). Береться з config('laravelfiles.root_path').
+    private $filesFolder;
+
+    // Службові ассети пакета (no-img, іконка файлу) завжди лежать тут, незалежно від root_path.
+    private $assetsFolder = 'vendor/laravel-files/files';
 
     public function __construct(){
+        $root = trim((string) config('laravelfiles.root_path', $this->assetsFolder), '/\\');
+        $this->filesFolder = $root !== '' ? $root : $this->assetsFolder;
         $this->pathToFiles = public_path($this->filesFolder);
     }
 
@@ -229,7 +235,7 @@ class LaravelFiles
         if(file_exists($fileInfo['dirname'] . '/__thumbnails__/'.$thumbnailName)){
             return asset($this->filesFolder . $prePath . '/__thumbnails__/'.$thumbnailName);
         }else{
-            return asset($this->filesFolder . '/' . $this->fileIco);
+            return asset($this->assetsFolder . '/' . $this->fileIco);
         }
     }
 
